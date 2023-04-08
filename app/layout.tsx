@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         <div>
                             <WalletConnectButton />
                         </div>
-                        <div className="flex gap-4 my-8 justify-around">
+                        <div className="flex flex-col m-12 gap-4 justify-center md:flex-row">
                             <div className="flex flex-col gap-4">
                                 <div>
                                     Staking token balance: <UserStakingTokenBalance />
@@ -38,8 +38,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                                 </div>
                             </div>
                         </div>
-                        {children}
                     </div>
+                    {children}
                 </WalletProvider>
             </body>
         </html>

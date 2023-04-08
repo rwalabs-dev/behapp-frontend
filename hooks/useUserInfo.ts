@@ -26,11 +26,6 @@ export function useUserInfo() {
                 functionName: "balanceOf",
                 args: [address ?? "0x"],
             },
-            {
-                ...StakingPoolContract,
-                functionName: "pendingRewards",
-                args: [address ?? "0x"],
-            },
         ],
         enabled: !!address,
         scopeKey: address ?? "0x",
@@ -42,7 +37,6 @@ export function useUserInfo() {
             },
             rewards: {
                 balance: data[3],
-                pending: data[4],
             },
         })
     })
