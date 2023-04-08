@@ -43,8 +43,13 @@ export function MintForm() {
     const disabled = !hasMounted || preparing || sending
 
     return (
-        <Button disabled={disabled} loading={sending} onClick={() => action.write?.()}>
-            Mint staking tokens
-        </Button>
+        <div className="flex flex-col gap-2">
+            <p>
+                Mint some test tokens here.
+            </p>
+            <Button disabled={disabled} loading={sending} onClick={() => action.write?.()}>
+                Mint staking tokens
+            </Button>
+        </div>
     )
 }
