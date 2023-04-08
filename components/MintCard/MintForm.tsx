@@ -10,7 +10,7 @@ import { useHasMounted } from "@/hooks/useHasMounted";
 
 const amount = BigNumber.from(100000)
 
-function useMintStakingTokens() {
+function useMint() {
     const userInfo = useUserInfo()
     const tokenInfo = useTokenInfo()
 
@@ -34,9 +34,9 @@ function useMintStakingTokens() {
     return { prepare, action, wait }
 }
 
-export function MintButton() {
+export function MintForm() {
+    const { prepare, action, wait } = useMint()
     const hasMounted = useHasMounted()
-    const { prepare, action, wait } = useMintStakingTokens()
 
     const preparing = prepare.isLoading || prepare.isError || !action.write
     const sending = action.isLoading || wait.isLoading

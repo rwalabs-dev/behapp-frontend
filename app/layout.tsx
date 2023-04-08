@@ -1,5 +1,6 @@
 import "./globals.css";
 import { PoolTotalStaked } from "@/components/PoolTotalStaked";
+import { UserStakedAmount } from "@/components/UserStakedAmount";
 import { UserRewardsTokenBalance } from "@/components/UserRewardsTokenBalance";
 import { UserStakingTokenBalance } from "@/components/UserStakingTokenBalance";
 import { WalletConnectButton } from "@/components/WalletConnectButton";
@@ -16,18 +17,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <body>
                 <WalletProvider>
                     <div className="container mx-auto">
-                        <div className="flex flex-col gap-4 my-4">
-                            <div>
-                                <WalletConnectButton />
+                        <div>
+                            <WalletConnectButton />
+                        </div>
+                        <div className="flex gap-4 my-8 justify-around">
+                            <div className="flex flex-col gap-4">
+                                <div>
+                                    Staking token balance: <UserStakingTokenBalance />
+                                </div>
+                                <div>
+                                    Reward token balance: <UserRewardsTokenBalance />
+                                </div>
                             </div>
-                            <div>
-                                Staking token balance: <UserStakingTokenBalance />
-                            </div>
-                            <div>
-                                Reward token balance: <UserRewardsTokenBalance />
-                            </div>
-                            <div>
-                                Pool total staked: <PoolTotalStaked />
+                            <div className="flex flex-col gap-4">
+                                <div>
+                                    Your staked amount: <UserStakedAmount />
+                                </div>
+                                <div>
+                                    Pool total staked: <PoolTotalStaked />
+                                </div>
                             </div>
                         </div>
                         {children}

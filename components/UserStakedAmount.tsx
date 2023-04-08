@@ -1,20 +1,20 @@
 "use client";
 
 import { BigNumber, ethers } from "ethers";
-import { usePoolInfo } from "@/hooks/usePoolInfo";
+import { useUserInfo } from "@/hooks/useUserInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
 
-export function PoolTotalStaked() {
-    const poolInfo = usePoolInfo()
+export function UserStakedAmount() {
+    const userInfo = useUserInfo()
     const tokenInfo = useTokenInfo()
     const hasMounted = useHasMounted()
 
-    const loaded = hasMounted && tokenInfo.isSuccess && poolInfo.isSuccess
+    const loaded = hasMounted && tokenInfo.isSuccess && userInfo.isSuccess
 
     const symbol = tokenInfo.data?.staking.symbol ?? ""
     const decimals = tokenInfo.data?.staking.decimals ?? 0
-    const amount = poolInfo.data?.totalStaked ?? BigNumber.from(0)
+    const amount = userInfo.data?.staking.staked ?? BigNumber.from(0)
 
     return (
         <span>

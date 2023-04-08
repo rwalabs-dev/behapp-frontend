@@ -1,13 +1,13 @@
 import { Card } from "@/components/Card";
-import { MintButton } from "./MintButton";
+import { StakeForm } from "./StakeForm";
 
-export function MintCard() {
+export function StakeCard() {
     return (
         <Card>
             <Card.Title>
-                Mint staking tokens
+                Stake tokens
             </Card.Title>
-            <MintButton />
+            <StakeForm />
         </Card>
     )
 }
