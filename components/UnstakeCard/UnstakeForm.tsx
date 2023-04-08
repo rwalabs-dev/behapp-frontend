@@ -1,8 +1,8 @@
 "use client";
 
-import { BigNumber, ethers } from "ethers";
+import { BigNumber } from "ethers";
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
-import { StakingTokenContract, StakingPoolContract } from "@/config/contracts";
+import { StakingPoolContract } from "@/config/contracts";
 import { Button } from "@/components/Button";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { usePoolInfo } from "@/hooks/usePoolInfo";
@@ -10,38 +10,17 @@ import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
 import { useBigNumber, useBigNumberInput } from "@/modules/bigNumber";
 
-function useApprove() {
-    const userInfo = useUserInfo()
-
-    const prepare = usePrepareContractWrite({
-        ...StakingTokenContract,
-        functionName: "approve",
-        args: [StakingPoolContract.address, ethers.constants.MaxUint256],
-    })
-
-    const action = useContractWrite(prepare.config)
-
-    const wait = useWaitForTransaction({
-        hash: action.data?.hash, onSuccess() {
-            userInfo.refetch()
-        }
-    })
-
-    return { prepare, action, wait }
-}
-
-function useStake(amount: BigNumber, reset: () => void) {
+function useUnstake(amount: BigNumber, reset: () => void) {
     const userInfo = useUserInfo()
     const poolInfo = usePoolInfo()
 
     const prepare = usePrepareContractWrite({
         ...StakingPoolContract,
-        functionName: "stake",
+        functionName: "unstake",
         args: [amount],
         enabled: userInfo.isSuccess
             && amount.gt(0)
-            && amount.lte(userInfo.data?.staking.balance ?? 0)
-            && amount.lte(userInfo.data?.staking.allowance ?? 0),
+            && amount.lte(userInfo.data?.staking.staked ?? 0),
     })
 
     const action = useContractWrite(prepare.config)
@@ -57,16 +36,10 @@ function useStake(amount: BigNumber, reset: () => void) {
     return { prepare, action, wait }
 }
 
-export function StakeForm() {
-    const userInfo = useUserInfo()
+export function UnstakeForm() {
     const tokenInfo = useTokenInfo()
     const [amount, setAmount] = useBigNumber(0)
     const [amountStr, setAmountStr] = useBigNumberInput(amount, setAmount, tokenInfo.data?.staking.decimals ?? 0)
-    const hasMounted = useHasMounted()
-
-    const allowance = userInfo.data?.staking.allowance ?? BigNumber.from(0)
-
-    const insufficientAllowance = amount.gt(allowance)
 
     return (
         <div className="flex flex-col gap-2">
@@ -80,9 +53,7 @@ export function StakeForm() {
                 <MaxButton setAmount={setAmountStr.fromBigNumber} />
             </div>
             <div>
-                {hasMounted && insufficientAllowance
-                    ? <ApproveButton />
-                    : <StakeButton amount={amount} reset={setAmountStr.reset} />}
+                <UnstakeButton amount={amount} reset={setAmountStr.reset} />
             </div>
         </div>
     )
@@ -92,47 +63,33 @@ function MaxButton({ setAmount }: { setAmount: (amount: BigNumber) => void }) {
     const userInfo = useUserInfo()
     const hasMounted = useHasMounted()
 
-    const balance = userInfo.data?.staking.balance ?? BigNumber.from(0)
+    const staked = userInfo.data?.staking.staked ?? BigNumber.from(0)
 
     const disabled = !hasMounted || !userInfo.isSuccess;
 
     return (
-        <Button disabled={disabled} onClick={() => setAmount(balance)}>
+        <Button disabled={disabled} onClick={() => setAmount(staked)}>
             Max
         </Button>
     )
 }
 
-function ApproveButton() {
-    const { prepare, action, wait } = useApprove()
-
-    const preparing = prepare.isLoading || prepare.isError || !action.write
-    const sending = action.isLoading || wait.isLoading
-    const disabled = preparing || sending
-
-    return (
-        <Button disabled={disabled} loading={sending} onClick={() => action.write?.()}>
-            Approve contract
-        </Button>
-    )
-}
-
-function StakeButton({ amount, reset }: { amount: BigNumber, reset: () => void }) {
+function UnstakeButton({ amount, reset }: { amount: BigNumber, reset: () => void }) {
     const userInfo = useUserInfo()
-    const { prepare, action, wait } = useStake(amount, reset)
+    const { prepare, action, wait } = useUnstake(amount, reset)
 
-    const balance = userInfo.data?.staking.balance ?? BigNumber.from(0)
+    const staked = userInfo.data?.staking.staked ?? BigNumber.from(0)
 
     const zeroAmount = amount.eq(0)
-    const insufficientBalance = amount.gt(balance)
+    const insufficientStaked = amount.gt(staked)
 
     const preparing = prepare.isLoading || prepare.isError || !action.write
     const sending = action.isLoading || wait.isLoading
-    const disabled = zeroAmount || insufficientBalance || !userInfo.isSuccess || preparing || sending
+    const disabled = zeroAmount || insufficientStaked || !userInfo.isSuccess || preparing || sending
 
     return (
         <Button disabled={disabled} loading={sending} onClick={() => action.write?.()}>
-            {insufficientBalance ? 'Insufficient balance' : 'Stake tokens'}
+            {insufficientStaked ? 'Insufficient stake' : 'Unstake tokens'}
         </Button>
     )
 }
