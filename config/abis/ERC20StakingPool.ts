@@ -90,6 +90,11 @@ const abi = [
         "type": "error"
     },
     {
+        "inputs": [],
+        "name": "ZeroStake",
+        "type": "error"
+    },
+    {
         "anonymous": false,
         "inputs": [
             {
@@ -393,6 +398,13 @@ const abi = [
     },
     {
         "inputs": [],
+        "name": "sweepUndistributed",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "totalRewards",
         "outputs": [
             {
@@ -450,6 +462,6 @@ const abi = [
         "stateMutability": "nonpayable",
         "type": "function"
     }
-] as const
+] as const;
 
 export default abi;

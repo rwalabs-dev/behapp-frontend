@@ -1,6 +1,6 @@
 "use client";
 
-import { BigNumber, ethers } from "ethers";
+import { BigNumber } from "ethers";
 import { usePoolInfo } from "@/hooks/usePoolInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
 

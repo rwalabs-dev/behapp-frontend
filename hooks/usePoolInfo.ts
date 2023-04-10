@@ -18,7 +18,7 @@ export function usePoolInfo() {
             },
         ],
         watch: true,
-        select: (data) => ({
+        select: data => ({
             totalStaked: data[0],
             remainingRewards: data[1],
             endOfDistribution: data[2],

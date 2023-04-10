@@ -29,7 +29,7 @@ export function useUserInfo() {
         ],
         enabled: !!address,
         scopeKey: address ?? "0x",
-        select: (data) => ({
+        select: data => ({
             staking: {
                 allowance: data[0],
                 balance: data[1],

@@ -21,7 +21,7 @@ export function useTokenInfo() {
                 functionName: "decimals",
             },
         ],
-        select: (data) => ({
+        select: data => ({
             staking: {
                 symbol: data[0],
                 decimals: data[1],
