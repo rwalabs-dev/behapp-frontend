@@ -23,6 +23,11 @@ export function useUserInfo() {
             },
             {
                 ...RewardsTokenContract,
+                functionName: "allowance",
+                args: [address ?? "0x", StakingPoolContract.address],
+            },
+            {
+                ...RewardsTokenContract,
                 functionName: "balanceOf",
                 args: [address ?? "0x"],
             },
@@ -36,7 +41,8 @@ export function useUserInfo() {
                 staked: data[2],
             },
             rewards: {
-                balance: data[3],
+                allowance: data[3],
+                balance: data[4],
             },
         })
     })

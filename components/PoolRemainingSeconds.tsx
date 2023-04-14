@@ -14,11 +14,13 @@ export function PoolRemainingSeconds() {
 
     return (
         <span>
-            {
-                loaded && timestamp.gt(0)
-                    ? new Date(timestamp.toNumber() * 1000).toLocaleString()
-                    : "-"
-            }
+            {loaded && timestamp.gt(0) ? format(timestamp.toNumber()) : "-"}
         </span>
     )
+}
+
+function format(seconds: number) {
+    const date = new Date(0)
+    date.setSeconds(seconds)
+    return date.toISOString().substring(11, 19)
 }
