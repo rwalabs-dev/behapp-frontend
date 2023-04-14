@@ -2,7 +2,7 @@ import "./globals.css";
 import { PoolTotalStaked } from "@/components/PoolTotalStaked";
 import { UserStakedAmount } from "@/components/UserStakedAmount";
 import { PoolRemainingRewards } from "@/components/PoolRemainingRewards";
-import { PoolEndOfDistribution } from "@/components/PoolEndOfDistribution";
+import { PoolRemainingSeconds } from "@/components/PoolRemainingSeconds";
 import { UserRewardsTokenBalance } from "@/components/UserRewardsTokenBalance";
 import { UserStakingTokenBalance } from "@/components/UserStakingTokenBalance";
 import { WalletConnectButton } from "@/components/WalletConnectButton";
@@ -45,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                                 Remaining rewards: <PoolRemainingRewards />
                             </div>
                             <div className="text-center text-xl">
-                                End of current distribution: <PoolEndOfDistribution />
+                                Remaining time: <PoolRemainingSeconds />
                             </div>
                         </div>
                     </div>

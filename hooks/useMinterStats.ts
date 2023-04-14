@@ -1,17 +1,18 @@
 import { BigNumber } from "ethers";
-import { useContractReads } from "wagmi";
-import { StakingPoolContract } from "@/config/contracts";
-import { useMinterAddressList } from "./useMinterAddressList";
+import { useContractRead, useContractReads } from "wagmi";
+import { StakingTokenContract, StakingPoolContract } from "@/config/contracts";
 
-export function useMinterStats() {
-    const minterAddressList = useMinterAddressList()
+export function useMinterStats(i: number) {
+    const minterAddress = useContractRead({
+        ...StakingTokenContract,
+        functionName: "minterAddress",
+        args: [BigNumber.from(i)]
+    })
 
-    const addresses = minterAddressList.data ?? []
+    const address = minterAddress.data ?? "0x"
 
-    const contracts = []
-
-    for (const address of addresses) {
-        contracts.push(...[
+    return useContractReads({
+        contracts: [
             {
                 ...StakingPoolContract,
                 functionName: "staked",
@@ -22,29 +23,13 @@ export function useMinterStats() {
                 functionName: "pendingRewards",
                 args: [address]
             },
-        ])
-    }
-
-    return useContractReads({
-        contracts,
-        enabled: minterAddressList.isSuccess && addresses.length > 0,
+        ],
+        enabled: minterAddress.isSuccess,
         watch: true,
-        select: data => {
-            const results: Array<{
-                address: string
-                staked: BigNumber
-                pendingRewards: BigNumber
-            }> = []
-
-            for (let i = 0; i < addresses.length; i++) {
-                results.push({
-                    address: addresses[i],
-                    staked: data[i * 2] as BigNumber,
-                    pendingRewards: data[i * 2 + 1] as BigNumber,
-                })
-            }
-
-            return results
-        },
+        select: data => ({
+            address,
+            staked: data[0],
+            pendingRewards: data[1],
+        }),
     })
 }

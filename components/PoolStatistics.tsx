@@ -2,26 +2,22 @@
 
 import { ethers } from "ethers";
 import { useHasMounted } from "@/hooks/useHasMounted";
-import { useMinterStats } from "@/hooks/useMinterStats";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
+import { useNbMinters } from "@/hooks/useNbMinters";
+import { useMinterStats } from "@/hooks/useMinterStats";
 
 export function PoolStatistics() {
-    const tokenInfo = useTokenInfo()
-    const minterStats = useMinterStats()
+    const nbMinters = useNbMinters()
     const hasMounted = useHasMounted()
 
-    const loaded = hasMounted && tokenInfo.isSuccess && minterStats.isSuccess
+    const loaded = hasMounted && nbMinters.isSuccess
 
-    const stats = minterStats.data ?? []
-    const stakingSymbol = tokenInfo.data?.staking.symbol ?? "-"
-    const stakingDecimals = tokenInfo.data?.staking.decimals ?? 0
-    const rewardsSymbol = tokenInfo.data?.rewards.symbol ?? "-"
-    const rewardsDecimals = tokenInfo.data?.rewards.decimals ?? 0
+    const nb = nbMinters.data ?? 0
 
     return (
         <div>
             <p>
-                Number of minters: {loaded ? stats.length.toString() : "-"}
+                Number of minters: {loaded ? nb : "-"}
             </p>
             <table>
                 <thead>
@@ -32,23 +28,37 @@ export function PoolStatistics() {
                     </tr>
                 </thead>
                 <tbody>
-                    {
-                        loaded && stats.map((item, i) => (
-                            <tr key={i}>
-                                <td className="text-center">
-                                    {item.address}
-                                </td>
-                                <td className="text-center">
-                                    {parseFloat(ethers.utils.formatUnits(item.staked, stakingDecimals)).toLocaleString()} ${stakingSymbol}
-                                </td>
-                                <td className="text-center">
-                                    {parseFloat(ethers.utils.formatUnits(item.pendingRewards, rewardsDecimals)).toLocaleString()} ${rewardsSymbol}
-                                </td>
-                            </tr>
-                        ))
-                    }
+                    {loaded && [...Array(nb)].map((e, i) => <MinterStatLine key={i} i={i} />)}
                 </tbody>
             </table>
         </div>
+    )
+}
+
+function MinterStatLine({ i }: { i: number }) {
+    const tokenInfo = useTokenInfo()
+    const minterStats = useMinterStats(i)
+
+    const stakingSymbol = tokenInfo.data?.staking.symbol ?? "-"
+    const stakingDecimals = tokenInfo.data?.staking.decimals ?? 0
+    const rewardsSymbol = tokenInfo.data?.rewards.symbol ?? "-"
+    const rewardsDecimals = tokenInfo.data?.rewards.decimals ?? 0
+
+    const address = minterStats.data?.address ?? 0
+    const staked = minterStats.data?.staked ?? 0
+    const pendingRewards = minterStats.data?.pendingRewards ?? 0
+
+    return (
+        <tr>
+            <td className="text-center">
+                {address}
+            </td>
+            <td className="text-center">
+                {parseFloat(ethers.utils.formatUnits(staked, stakingDecimals)).toLocaleString()} ${stakingSymbol}
+            </td>
+            <td className="text-center">
+                {parseFloat(ethers.utils.formatUnits(pendingRewards, rewardsDecimals)).toLocaleString()} ${rewardsSymbol}
+            </td>
+        </tr>
     )
 }

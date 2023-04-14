@@ -4,13 +4,13 @@ import { BigNumber } from "ethers";
 import { usePoolInfo } from "@/hooks/usePoolInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
 
-export function PoolEndOfDistribution() {
+export function PoolRemainingSeconds() {
     const poolInfo = usePoolInfo()
     const hasMounted = useHasMounted()
 
     const loaded = hasMounted && poolInfo.isSuccess
 
-    const timestamp = poolInfo.data?.endOfDistribution ?? BigNumber.from(0)
+    const timestamp = poolInfo.data?.remainingSeconds ?? BigNumber.from(0)
 
     return (
         <span>
