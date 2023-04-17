@@ -1,13 +1,12 @@
-import { Card } from "@/components/Card";
 import { UnstakeForm } from "./UnstakeForm";
 
 export function UnstakeCard() {
     return (
-        <Card>
-            <Card.Title>
-                Unstake tokens
-            </Card.Title>
-            <UnstakeForm />
-        </Card>
+        <div className="card card-bordered w-96">
+            <div className="card-body">
+                <div className="card-title">Unstake tokens</div>
+                <UnstakeForm />
+            </div>
+        </div>
     )
 }

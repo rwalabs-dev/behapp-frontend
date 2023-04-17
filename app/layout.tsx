@@ -1,4 +1,5 @@
 import "./globals.css";
+import { MintButton } from "@/components/MintButton";
 import { PoolTotalStaked } from "@/components/PoolTotalStaked";
 import { UserStakedAmount } from "@/components/UserStakedAmount";
 import { PoolRemainingRewards } from "@/components/PoolRemainingRewards";
@@ -15,11 +16,11 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en">
-            <body>
+        <html lang="en" data-theme="cmyk">
+            <body className="mb-96">
                 <WalletProvider>
                     <div className="container mx-auto">
-                        <div>
+                        <div className="flex justify-center">
                             <WalletConnectButton />
                         </div>
                         <div className="flex flex-col gap-8 m-12">
@@ -46,6 +47,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                             </div>
                             <div className="text-center text-xl">
                                 Remaining time: <PoolRemainingSeconds />
+                            </div>
+                            <div className="w-96 mx-auto">
+                                <MintButton />
                             </div>
                         </div>
                     </div>

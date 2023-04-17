@@ -3,7 +3,7 @@
 import { BigNumber } from "ethers";
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 import { StakingPoolContract } from "@/config/contracts";
-import { Button } from "@/components/Button";
+import { Spinner } from "@/components/Spinner";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { usePoolInfo } from "@/hooks/usePoolInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
@@ -43,10 +43,10 @@ export function UnstakeForm() {
 
     return (
         <div className="flex flex-col gap-2">
-            <div className="flex gap-2">
+            <div className="input-group">
                 <input
                     type="text"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    className="input input-primary w-full"
                     value={amountStr}
                     onChange={e => setAmountStr.fromStr(e.target.value.trim())}
                 />
@@ -68,9 +68,9 @@ function MaxButton({ setAmount }: { setAmount: (amount: BigNumber) => void }) {
     const disabled = !hasMounted || !userInfo.isSuccess;
 
     return (
-        <Button disabled={disabled} onClick={() => setAmount(staked)}>
+        <button disabled={disabled} onClick={() => setAmount(staked)} className="btn btn-primary w-16">
             Max
-        </Button>
+        </button>
     )
 }
 
@@ -88,8 +88,8 @@ function UnstakeButton({ amount, reset }: { amount: BigNumber, reset: () => void
     const disabled = zeroAmount || insufficientStaked || !userInfo.isSuccess || preparing || sending
 
     return (
-        <Button disabled={disabled} loading={sending} onClick={() => action.write?.()}>
-            {insufficientStaked ? 'Insufficient stake' : 'Unstake tokens'}
-        </Button>
+        <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
+            {sending ? <Spinner /> : null} {insufficientStaked ? 'Insufficient stake' : 'Unstake tokens'}
+        </button>
     )
 }

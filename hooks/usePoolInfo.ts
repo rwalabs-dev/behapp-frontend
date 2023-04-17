@@ -16,12 +16,17 @@ export function usePoolInfo() {
                 ...StakingPoolContract,
                 functionName: "remainingSeconds",
             },
+            {
+                ...StakingPoolContract,
+                functionName: "ADD_REWARDS_ROLE",
+            }
         ],
         watch: true,
         select: data => ({
             totalStaked: data[0],
             remainingRewards: data[1],
             remainingSeconds: data[2],
+            addRewardsRole: data[3],
         })
     })
 }

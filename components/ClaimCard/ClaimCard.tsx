@@ -1,13 +1,12 @@
-import { Card } from "@/components/Card";
 import { ClaimForm } from "./ClaimForm";
 
 export function ClaimCard() {
     return (
-        <Card>
-            <Card.Title>
-                Claim rewards
-            </Card.Title>
-            <ClaimForm />
-        </Card>
+        <div className="card card-bordered w-96">
+            <div className="card-body">
+                <div className="card-title">Claim Rewards</div>
+                <ClaimForm />
+            </div>
+        </div>
     )
 }

@@ -3,7 +3,7 @@
 import { BigNumber, ethers } from "ethers";
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 import { StakingTokenContract, StakingPoolContract } from "@/config/contracts";
-import { Button } from "@/components/Button";
+import { Spinner } from "@/components/Spinner";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { usePoolInfo } from "@/hooks/usePoolInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
@@ -70,14 +70,16 @@ export function StakeForm() {
 
     return (
         <div className="flex flex-col gap-2">
-            <div className="flex gap-2">
-                <input
-                    type="text"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                    value={amountStr}
-                    onChange={e => setAmountStr.fromStr(e.target.value.trim())}
-                />
-                <MaxButton setAmount={setAmountStr.fromBigNumber} />
+            <div className="form-control">
+                <div className="input-group">
+                    <input
+                        type="text"
+                        className="input input-primary w-full"
+                        value={amountStr}
+                        onChange={e => setAmountStr.fromStr(e.target.value.trim())}
+                    />
+                    <MaxButton setAmount={setAmountStr.fromBigNumber} />
+                </div>
             </div>
             <div>
                 {hasMounted && insufficientAllowance
@@ -97,9 +99,9 @@ function MaxButton({ setAmount }: { setAmount: (amount: BigNumber) => void }) {
     const disabled = !hasMounted || !userInfo.isSuccess;
 
     return (
-        <Button disabled={disabled} onClick={() => setAmount(balance)}>
+        <button disabled={disabled} onClick={() => setAmount(balance)} className="btn btn-primary w-16">
             Max
-        </Button>
+        </button>
     )
 }
 
@@ -111,9 +113,9 @@ function ApproveButton() {
     const disabled = preparing || sending
 
     return (
-        <Button disabled={disabled} loading={sending} onClick={() => action.write?.()}>
-            Approve contract
-        </Button>
+        <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
+            {sending ? <Spinner /> : null} Approve contract
+        </button>
     )
 }
 
@@ -131,8 +133,8 @@ function StakeButton({ amount, reset }: { amount: BigNumber, reset: () => void }
     const disabled = zeroAmount || insufficientBalance || !userInfo.isSuccess || preparing || sending
 
     return (
-        <Button disabled={disabled} loading={sending} onClick={() => action.write?.()}>
-            {insufficientBalance ? 'Insufficient balance' : 'Stake tokens'}
-        </Button>
+        <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
+            {sending ? <Spinner /> : null} {insufficientBalance ? 'Insufficient balance' : 'Stake tokens'}
+        </button>
     )
 }

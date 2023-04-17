@@ -22,7 +22,7 @@ export function PoolStatistics() {
             <table>
                 <thead>
                     <tr>
-                        <th className="w-96">Address</th>
+                        <th className="w-48 md:w-96">Address</th>
                         <th className="w-48">Staked</th>
                         <th className="w-48">Pending Rewards</th>
                     </tr>

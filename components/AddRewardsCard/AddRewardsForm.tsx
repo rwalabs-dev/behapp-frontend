@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { BigNumber, ethers } from "ethers";
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 import { RewardsTokenContract, StakingPoolContract } from "@/config/contracts";
+import { Spinner } from "@/components/Spinner";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
 import { useBigNumber, useBigNumberInput } from "@/modules/bigNumber";
-import { Button } from "@/components/Button";
+import { useCallback } from "react";
 
 function useApprove() {
     const userInfo = useUserInfo()
@@ -30,7 +30,7 @@ function useApprove() {
     return { prepare, action, wait }
 }
 
-function useAddRewards(amount: BigNumber, duration: number, reset: () => void) {
+function useAddRewards(amount: BigNumber, duration: BigNumber, reset: () => void) {
     const userInfo = useUserInfo()
 
     const prepare = usePrepareContractWrite({
@@ -41,7 +41,7 @@ function useAddRewards(amount: BigNumber, duration: number, reset: () => void) {
             && amount.gt(0)
             && amount.lte(userInfo.data?.rewards.balance ?? 0)
             && amount.lte(userInfo.data?.rewards.allowance ?? 0)
-            && duration > 0,
+            && duration.gt(0),
     })
 
     const action = useContractWrite(prepare.config)
@@ -61,19 +61,25 @@ export function AddRewardsForm() {
     const tokenInfo = useTokenInfo()
     const [amount, setAmount] = useBigNumber(0)
     const [amountStr, setAmountStr] = useBigNumberInput(amount, setAmount, tokenInfo.data?.rewards.decimals ?? 0)
-    const [duration, setDuration] = useState<number>(0)
+    const [duration, setDuration] = useBigNumber(0)
+    const [durationStr, setDurationStr] = useBigNumberInput(duration, setDuration, 0)
     const hasMounted = useHasMounted()
 
     const allowance = userInfo.data?.rewards.allowance ?? BigNumber.from(0)
 
     const insufficientAllowance = amount.gt(allowance)
 
+    const reset = useCallback(() => {
+        setAmountStr.reset()
+        setDurationStr.reset()
+    }, [setAmountStr, setDurationStr])
+
     return (
         <div className="flex flex-col gap-2">
             <div>
                 <input
                     type="text"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    className="input input-primary w-full"
                     value={amountStr}
                     onChange={e => setAmountStr.fromStr(e.target.value.trim())}
                 />
@@ -81,15 +87,15 @@ export function AddRewardsForm() {
             <div>
                 <input
                     type="text"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                    value={duration}
-                    onChange={e => setDuration(parseInt(e.target.value.trim()))}
+                    className="input input-primary w-full"
+                    value={durationStr}
+                    onChange={e => setDurationStr.fromStr(e.target.value)}
                 />
             </div>
             <div>
                 {hasMounted && insufficientAllowance
                     ? <ApproveButton />
-                    : <AddRewardsButton amount={amount} duration={duration} reset={setAmountStr.reset} />}
+                    : <AddRewardsButton amount={amount} duration={duration} reset={reset} />}
             </div>
         </div>
     )
@@ -103,20 +109,20 @@ function ApproveButton() {
     const disabled = preparing || sending
 
     return (
-        <Button disabled={disabled} loading={sending} onClick={() => action.write?.()}>
-            Approve contract
-        </Button>
+        <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
+            {sending ? <Spinner /> : null} Approve contract
+        </button>
     )
 }
 
-function AddRewardsButton({ amount, duration, reset }: { amount: BigNumber, duration: number, reset: () => void }) {
+function AddRewardsButton({ amount, duration, reset }: { amount: BigNumber, duration: BigNumber, reset: () => void }) {
     const userInfo = useUserInfo()
     const { prepare, action, wait } = useAddRewards(amount, duration, reset)
 
     const balance = userInfo.data?.rewards.balance ?? BigNumber.from(0)
 
     const zeroAmount = amount.eq(0)
-    const zeroDuration = duration === 0;
+    const zeroDuration = duration.eq(0);
     const insufficientBalance = amount.gt(balance)
 
     const preparing = prepare.isLoading || prepare.isError || !action.write
@@ -124,8 +130,8 @@ function AddRewardsButton({ amount, duration, reset }: { amount: BigNumber, dura
     const disabled = zeroAmount || zeroDuration || insufficientBalance || !userInfo.isSuccess || preparing || sending
 
     return (
-        <Button disabled={disabled} loading={sending} onClick={() => action.write?.()}>
-            {insufficientBalance ? 'Insufficient balance' : 'Add rewards'}
-        </Button>
+        <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
+            {sending ? <Spinner /> : null} {insufficientBalance ? 'Insufficient balance' : 'Add rewards'}
+        </button>
     )
 }

@@ -1,11 +1,12 @@
-import { Card } from "../Card";
 import { AddRewardsForm } from "./AddRewardsForm";
 
 export function AddRewardsCard() {
     return (
-        <Card>
-            <Card.Title>Add Rewards</Card.Title>
-            <AddRewardsForm />
-        </Card>
+        <div className="card card-bordered w-96">
+            <div className="card-body">
+                <div className="card-title">Add Rewards</div>
+                <AddRewardsForm />
+            </div>
+        </div>
     )
 }

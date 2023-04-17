@@ -3,7 +3,7 @@
 import { BigNumber } from "ethers";
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 import { StakingTokenContract } from "@/config/contracts";
-import { Button } from "@/components/Button";
+import { Spinner } from "@/components/Spinner";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
@@ -34,7 +34,7 @@ function useMint() {
     return { prepare, action, wait }
 }
 
-export function MintForm() {
+export function MintButton() {
     const { prepare, action, wait } = useMint()
     const hasMounted = useHasMounted()
 
@@ -43,13 +43,8 @@ export function MintForm() {
     const disabled = !hasMounted || preparing || sending
 
     return (
-        <div className="flex flex-col gap-2">
-            <p>
-                Mint some test tokens here.
-            </p>
-            <Button disabled={disabled} loading={sending} onClick={() => action.write?.()}>
-                Mint staking tokens
-            </Button>
-        </div>
+        <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
+            {sending ? <Spinner /> : null} Mint staking tokens
+        </button>
     )
 }

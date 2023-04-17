@@ -3,7 +3,7 @@
 import { BigNumber } from "ethers";
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 import { StakingPoolContract } from "@/config/contracts";
-import { Button } from "@/components/Button";
+import { Spinner } from "@/components/Spinner";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { UserPendingRewards } from "../UserPendingRewards";
 import { usePendingRewards } from "@/hooks/usePendingRewards";
@@ -30,7 +30,7 @@ function useClaim() {
 
 export function ClaimForm() {
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 justify-between">
             <div>
                 Your pending rewards: <UserPendingRewards />
             </div>
@@ -56,8 +56,8 @@ function ClaimButton() {
     const disabled = !hasMounted || zeroAmount || !pendingRewards.isSuccess || preparing || sending
 
     return (
-        <Button disabled={disabled} loading={sending} onClick={() => action.write?.()}>
-            {!hasMounted || zeroAmount ? 'No rewards' : 'Claim rewards'}
-        </Button>
+        <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
+            {sending ? <Spinner /> : null} {!hasMounted || zeroAmount ? 'No rewards' : 'Claim rewards'}
+        </button>
     )
 }
