@@ -16,7 +16,7 @@ export function PoolStatistics() {
 
     return (
         <div className="w-96">
-            <p className="mb-4">
+            <p>
                 Number of minters: {loaded ? nb : "-"}
             </p>
             <div className="flex flex-col gap-2">
@@ -30,7 +30,9 @@ function MinterStatLine({ i }: { i: number }) {
     const tokenInfo = useTokenInfo()
     const minterStats = useMinterStats(i)
 
+    const stakingSymbol = tokenInfo.data?.staking.symbol ?? "-"
     const stakingDecimals = tokenInfo.data?.staking.decimals ?? 0
+    const rewardsSymbol = tokenInfo.data?.rewards.symbol ?? "-"
     const rewardsDecimals = tokenInfo.data?.rewards.decimals ?? 0
 
     const address = minterStats.data?.address ?? "-"
@@ -39,14 +41,18 @@ function MinterStatLine({ i }: { i: number }) {
 
     return (
         <div>
+            <div className="divider">{formatAddress(address)}</div>
             <p className="flex justify-between">
-                Address: <span className="font-medium">{formatAddress(address)}</span>
+                Staked:
+                <span className="font-medium">
+                    {formatAmount(staked, stakingDecimals)} ${stakingSymbol}
+                </span>
             </p>
             <p className="flex justify-between">
-                Staked: <span className="font-medium">{formatAmount(staked, stakingDecimals)}</span>
-            </p>
-            <p className="flex justify-between">
-                Pending rewards: <span className="font-medium">{formatAmount(pendingRewards, rewardsDecimals)}</span>
+                Pending rewards:
+                <span className="font-medium">
+                    {formatAmount(pendingRewards, rewardsDecimals)} ${rewardsSymbol}
+                </span>
             </p>
         </div >
     )
