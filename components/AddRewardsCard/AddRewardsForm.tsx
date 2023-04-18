@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { BigNumber, ethers } from "ethers";
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 import { RewardsTokenContract, StakingPoolContract } from "@/config/contracts";
@@ -30,7 +31,7 @@ function useApprove() {
     return { prepare, action, wait }
 }
 
-function useAddRewards(amount: BigNumber, duration: BigNumber, reset: () => void) {
+function useAddRewards(amount: BigNumber, duration: number, reset: () => void) {
     const userInfo = useUserInfo()
 
     const prepare = usePrepareContractWrite({
@@ -41,7 +42,7 @@ function useAddRewards(amount: BigNumber, duration: BigNumber, reset: () => void
             && amount.gt(0)
             && amount.lte(userInfo.data?.rewards.balance ?? 0)
             && amount.lte(userInfo.data?.rewards.allowance ?? 0)
-            && duration.gt(0),
+            && duration > 0,
     })
 
     const action = useContractWrite(prepare.config)
@@ -61,17 +62,17 @@ export function AddRewardsForm() {
     const tokenInfo = useTokenInfo()
     const [amount, setAmount] = useBigNumber(0)
     const [amountStr, setAmountStr] = useBigNumberInput(amount, setAmount, tokenInfo.data?.rewards.decimals ?? 0)
-    const [duration, setDuration] = useBigNumber(0)
-    const [durationStr, setDurationStr] = useBigNumberInput(duration, setDuration, 0)
+    const [durationStr, setDurationStr] = useState<string>('')
     const hasMounted = useHasMounted()
 
     const allowance = userInfo.data?.rewards.allowance ?? BigNumber.from(0)
+    const duration = durationStr.trim() === "" ? 0 : parseInt(durationStr.trim())
 
     const insufficientAllowance = amount.gt(allowance)
 
     const reset = useCallback(() => {
         setAmountStr.reset()
-        setDurationStr.reset()
+        setDurationStr('')
     }, [setAmountStr, setDurationStr])
 
     return (
@@ -86,10 +87,11 @@ export function AddRewardsForm() {
             </div>
             <div>
                 <input
-                    type="text"
+                    type="number"
+                    step="1"
                     className="input input-primary w-full"
                     value={durationStr}
-                    onChange={e => setDurationStr.fromStr(e.target.value)}
+                    onChange={e => setDurationStr(e.target.value)}
                 />
             </div>
             <div>
@@ -115,14 +117,14 @@ function ApproveButton() {
     )
 }
 
-function AddRewardsButton({ amount, duration, reset }: { amount: BigNumber, duration: BigNumber, reset: () => void }) {
+function AddRewardsButton({ amount, duration, reset }: { amount: BigNumber, duration: number, reset: () => void }) {
     const userInfo = useUserInfo()
     const { prepare, action, wait } = useAddRewards(amount, duration, reset)
 
     const balance = userInfo.data?.rewards.balance ?? BigNumber.from(0)
 
     const zeroAmount = amount.eq(0)
-    const zeroDuration = duration.eq(0);
+    const zeroDuration = duration === 0;
     const insufficientBalance = amount.gt(balance)
 
     const preparing = prepare.isLoading || prepare.isError || !action.write

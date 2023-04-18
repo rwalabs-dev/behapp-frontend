@@ -37,6 +37,7 @@ function MinterStatLine({ i }: { i: number }) {
 
     const address = minterStats.data?.address ?? "-"
     const staked = minterStats.data?.staked ?? 0
+    const rewardsBalance = minterStats.data?.rewardsBalance ?? 0
     const pendingRewards = minterStats.data?.pendingRewards ?? 0
 
     return (
@@ -46,6 +47,12 @@ function MinterStatLine({ i }: { i: number }) {
                 Staked:
                 <span className="font-medium">
                     {formatAmount(staked, stakingDecimals)} ${stakingSymbol}
+                </span>
+            </p>
+            <p className="flex justify-between">
+                Rewards balance:
+                <span className="font-medium">
+                    {formatAmount(rewardsBalance, rewardsDecimals)} ${rewardsSymbol}
                 </span>
             </p>
             <p className="flex justify-between">
