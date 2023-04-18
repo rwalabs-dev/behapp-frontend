@@ -15,7 +15,7 @@ export function PoolStatistics() {
     const nb = nbMinters.data ?? 0
 
     return (
-        <div className="w-96 border">
+        <div className="w-96">
             <p className="mb-4">
                 Number of minters: {loaded ? nb : "-"}
             </p>

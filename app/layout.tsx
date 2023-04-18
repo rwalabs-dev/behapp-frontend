@@ -16,7 +16,7 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en" data-theme="cmyk">
+        <html lang="en" data-theme="corporate">
             <body className="mb-96">
                 <WalletProvider>
                     <div className="container mx-auto">
