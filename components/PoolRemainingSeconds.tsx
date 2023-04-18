@@ -19,8 +19,17 @@ export function PoolRemainingSeconds() {
     )
 }
 
-function format(seconds: number) {
-    const date = new Date(0)
-    date.setSeconds(seconds)
-    return date.toISOString().substring(11, 19)
+function format(duration: number) {
+    const days = Math.floor(duration / 86400)
+    const hours = Math.floor(duration / 3600) % 24
+    const minutes = Math.floor(duration / 60) % 60
+    const seconds = duration % 60
+
+    const hoursStr = hours < 10 ? '0' + hours : hours;
+    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+    const secondsStr = seconds < 10 ? '0' + seconds : seconds;
+
+    const time = [hoursStr, minutesStr, secondsStr].join(':')
+
+    return days > 0 ? `${days} days ${time}` : time
 }
