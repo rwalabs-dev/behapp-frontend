@@ -23,30 +23,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         <div className="flex justify-center">
                             <WalletConnectButton />
                         </div>
-                        <div className="flex flex-col gap-8 m-12">
-                            <div className="flex flex-col gap-4 justify-center md:flex-row">
-                                <div className="flex flex-col gap-4">
-                                    <div>
-                                        Staking token balance: <UserStakingTokenBalance />
-                                    </div>
-                                    <div>
-                                        Reward token balance: <UserRewardsTokenBalance />
-                                    </div>
-                                </div>
-                                <div className="flex flex-col gap-4">
-                                    <div>
-                                        Your staked amount: <UserStakedAmount />
-                                    </div>
-                                    <div>
-                                        Pool total staked: <PoolTotalStaked />
-                                    </div>
-                                </div>
+                        <div className="flex flex-col gap-2 m-12 w-96 mx-auto">
+                            <div className="flex justify-between">
+                                Pool total staked: <span className="font-medium"><PoolTotalStaked /></span>
                             </div>
-                            <div className="text-center text-xl">
-                                Remaining rewards: <PoolRemainingRewards />
+                            <div className="flex justify-between">
+                                Remaining rewards: <span className="font-medium"><PoolRemainingRewards /></span>
                             </div>
-                            <div className="text-center text-xl">
-                                Remaining time: <PoolRemainingSeconds />
+                            <div className="flex justify-between">
+                                Remaining time: <span className="font-medium"><PoolRemainingSeconds /></span>
                             </div>
                             <div className="w-96 mx-auto">
                                 <MintButton />

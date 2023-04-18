@@ -28,20 +28,7 @@ function useClaim() {
     return { prepare, action, wait }
 }
 
-export function ClaimForm() {
-    return (
-        <div className="flex flex-col gap-2 justify-between">
-            <div>
-                Your pending rewards: <UserPendingRewards />
-            </div>
-            <div>
-                <ClaimButton />
-            </div>
-        </div>
-    )
-}
-
-function ClaimButton() {
+export function ClaimButton() {
     const pendingRewards = usePendingRewards()
     const { prepare, action, wait } = useClaim()
     const hasMounted = useHasMounted()
@@ -57,7 +44,7 @@ function ClaimButton() {
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
-            {sending ? <Spinner /> : null} {!hasMounted || zeroAmount ? 'No rewards' : 'Claim rewards'}
+            <Spinner enabled={sending} /> {!hasMounted || zeroAmount ? 'No rewards' : 'Claim rewards'}
         </button>
     )
 }

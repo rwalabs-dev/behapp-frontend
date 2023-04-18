@@ -110,7 +110,7 @@ function ApproveButton() {
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
-            {sending ? <Spinner /> : null} Approve contract
+            <Spinner enabled={sending} /> Approve contract
         </button>
     )
 }
@@ -131,7 +131,7 @@ function AddRewardsButton({ amount, duration, reset }: { amount: BigNumber, dura
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
-            {sending ? <Spinner /> : null} {insufficientBalance ? 'Insufficient balance' : 'Add rewards'}
+            <Spinner enabled={sending} /> {insufficientBalance ? 'Insufficient balance' : 'Add rewards'}
         </button>
     )
 }

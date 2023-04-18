@@ -43,8 +43,8 @@ export function MintButton() {
     const disabled = !hasMounted || preparing || sending
 
     return (
-        <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
-            {sending ? <Spinner /> : null} Mint staking tokens
+        <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-secondary w-full">
+            <Spinner enabled={sending} /> Mint staking tokens
         </button>
     )
 }

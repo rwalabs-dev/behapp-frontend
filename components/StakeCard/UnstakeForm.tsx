@@ -89,7 +89,7 @@ function UnstakeButton({ amount, reset }: { amount: BigNumber, reset: () => void
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
-            {sending ? <Spinner /> : null} {insufficientStaked ? 'Insufficient stake' : 'Unstake tokens'}
+            <Spinner enabled={sending} /> {insufficientStaked ? 'Insufficient stake' : 'Unstake tokens'}
         </button>
     )
 }
