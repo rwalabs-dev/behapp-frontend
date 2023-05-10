@@ -36,13 +36,13 @@ export function useUserInfo() {
         scopeKey: address ?? "0x",
         select: data => ({
             staking: {
-                allowance: data[0],
-                balance: data[1],
-                staked: data[2],
+                allowance: data[0].result,
+                balance: data[1].result,
+                staked: data[2].result,
             },
             rewards: {
-                allowance: data[3],
-                balance: data[4],
+                allowance: data[3].result,
+                balance: data[4].result,
             },
         })
     })

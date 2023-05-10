@@ -1,6 +1,6 @@
 "use client";
 
-import { BigNumber, ethers } from "ethers";
+import { formatUnits } from "viem";
 import { usePoolInfo } from "@/hooks/usePoolInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
@@ -14,11 +14,11 @@ export function PoolTotalStaked() {
 
     const symbol = tokenInfo.data?.staking.symbol ?? ""
     const decimals = tokenInfo.data?.staking.decimals ?? 0
-    const amount = poolInfo.data?.totalStaked ?? BigNumber.from(0)
+    const amount = poolInfo.data?.totalStaked ?? 0n
 
     return (
         <span>
-            {loaded ? `${parseFloat(ethers.utils.formatUnits(amount, decimals)).toLocaleString()} \$${symbol}` : '-'}
+            {loaded ? `${parseFloat(formatUnits(amount, decimals)).toLocaleString()} \$${symbol}` : '-'}
         </span>
     )
 }

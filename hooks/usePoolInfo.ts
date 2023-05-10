@@ -23,10 +23,10 @@ export function usePoolInfo() {
         ],
         watch: true,
         select: data => ({
-            totalStaked: data[0],
-            remainingRewards: data[1],
-            remainingSeconds: data[2],
-            addRewardsRole: data[3],
+            totalStaked: data[0].result,
+            remainingRewards: data[1].result,
+            remainingSeconds: data[2].result,
+            addRewardsRole: data[3].result,
         })
     })
 }

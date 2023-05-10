@@ -23,12 +23,12 @@ export function useTokenInfo() {
         ],
         select: data => ({
             staking: {
-                symbol: data[0],
-                decimals: data[1],
+                symbol: data[0].result,
+                decimals: data[1].result,
             },
             rewards: {
-                symbol: data[2],
-                decimals: data[3],
+                symbol: data[2].result,
+                decimals: data[3].result,
             },
         })
     })

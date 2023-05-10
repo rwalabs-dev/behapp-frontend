@@ -1,11 +1,9 @@
 "use client";
 
-import { BigNumber } from "ethers";
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 import { StakingPoolContract } from "@/config/contracts";
 import { Spinner } from "@/components/Spinner";
 import { useUserInfo } from "@/hooks/useUserInfo";
-import { UserPendingRewards } from "../UserPendingRewards";
 import { usePendingRewards } from "@/hooks/usePendingRewards";
 import { useHasMounted } from "@/hooks/useHasMounted";
 
@@ -34,9 +32,9 @@ export function ClaimButton() {
     const hasMounted = useHasMounted()
 
 
-    const amount = pendingRewards.data ?? BigNumber.from(0)
+    const amount = pendingRewards.data ?? 0n
 
-    const zeroAmount = amount.eq(0)
+    const zeroAmount = amount === 0n
 
     const preparing = prepare.isLoading || prepare.isError || !action.write
     const sending = action.isLoading || wait.isLoading

@@ -2,11 +2,11 @@
 
 import { WagmiConfig } from "wagmi";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { wagmiClient, chains } from "@/config/wallet";
+import { wagmiConfig, chains } from "@/config/wallet";
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
     return (
-        <WagmiConfig client={wagmiClient}>
+        <WagmiConfig config={wagmiConfig}>
             <RainbowKitProvider chains={chains}>
                 {children}
             </RainbowKitProvider>

@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers";
 import { useContractRead, useContractReads } from "wagmi";
 import { StakingTokenContract, StakingPoolContract, RewardsTokenContract } from "@/config/contracts";
 
@@ -6,7 +5,7 @@ export function useMinterStats(i: number) {
     const minterAddress = useContractRead({
         ...StakingTokenContract,
         functionName: "minterAddress",
-        args: [BigNumber.from(i)]
+        args: [BigInt(i)]
     })
 
     const address = minterAddress.data ?? "0x"
@@ -33,9 +32,9 @@ export function useMinterStats(i: number) {
         watch: true,
         select: data => ({
             address,
-            staked: data[0],
-            rewardsBalance: data[1],
-            pendingRewards: data[2],
+            staked: data[0].result,
+            rewardsBalance: data[1].result,
+            pendingRewards: data[2].result,
         }),
     })
 }

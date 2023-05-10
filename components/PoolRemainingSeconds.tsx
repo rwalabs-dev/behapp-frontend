@@ -1,6 +1,5 @@
 "use client";
 
-import { BigNumber } from "ethers";
 import { usePoolInfo } from "@/hooks/usePoolInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
 
@@ -10,24 +9,24 @@ export function PoolRemainingSeconds() {
 
     const loaded = hasMounted && poolInfo.isSuccess
 
-    const timestamp = poolInfo.data?.remainingSeconds ?? BigNumber.from(0)
+    const timestamp = poolInfo.data?.remainingSeconds ?? 0n
 
     return (
         <span>
-            {loaded && timestamp.gt(0) ? format(timestamp.toNumber()) : "-"}
+            {loaded && timestamp > 0 ? format(timestamp) : "-"}
         </span>
     )
 }
 
-function format(duration: number) {
-    const days = Math.floor(duration / 86400)
-    const hours = Math.floor(duration / 3600) % 24
-    const minutes = Math.floor(duration / 60) % 60
-    const seconds = duration % 60
+function format(duration: bigint) {
+    const days = duration / 86400n
+    const hours = (duration / 3600n) % 24n
+    const minutes = (duration / 60n) % 60n
+    const seconds = duration % 60n
 
-    const hoursStr = hours < 10 ? '0' + hours : hours;
-    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
-    const secondsStr = seconds < 10 ? '0' + seconds : seconds;
+    const hoursStr = hours < 10 ? '0' + hours : hours.toString();
+    const minutesStr = minutes < 10 ? '0' + minutes : minutes.toString();
+    const secondsStr = seconds < 10 ? '0' + seconds : seconds.toString();
 
     const time = [hoursStr, minutesStr, secondsStr].join(':')
 

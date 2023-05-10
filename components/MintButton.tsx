@@ -1,6 +1,5 @@
 "use client";
 
-import { BigNumber } from "ethers";
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 import { StakingTokenContract } from "@/config/contracts";
 import { Spinner } from "@/components/Spinner";
@@ -8,18 +7,18 @@ import { useUserInfo } from "@/hooks/useUserInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
 
-const amount = BigNumber.from(100000)
+const amount = 100000n
 
 function useMint() {
     const userInfo = useUserInfo()
     const tokenInfo = useTokenInfo()
 
-    const scale = BigNumber.from(10).pow(tokenInfo.data?.staking.decimals ?? 0)
+    const scale = BigInt(10 ** (tokenInfo.data?.staking.decimals ?? 0))
 
     const prepare = usePrepareContractWrite({
         ...StakingTokenContract,
         functionName: "mint",
-        args: [amount.mul(scale)],
+        args: [amount * scale],
         enabled: tokenInfo.isSuccess,
     })
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { BigNumber, ethers } from "ethers";
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 import { StakingTokenContract, StakingPoolContract } from "@/config/contracts";
 import { Spinner } from "@/components/Spinner";
@@ -16,7 +15,7 @@ function useApprove() {
     const prepare = usePrepareContractWrite({
         ...StakingTokenContract,
         functionName: "approve",
-        args: [StakingPoolContract.address, ethers.constants.MaxUint256],
+        args: [StakingPoolContract.address, BigInt(2 ** (256 - 1))],
     })
 
     const action = useContractWrite(prepare.config)
@@ -30,7 +29,7 @@ function useApprove() {
     return { prepare, action, wait }
 }
 
-function useStake(amount: BigNumber, reset: () => void) {
+function useStake(amount: bigint, reset: () => void) {
     const userInfo = useUserInfo()
     const poolInfo = usePoolInfo()
 
@@ -39,9 +38,9 @@ function useStake(amount: BigNumber, reset: () => void) {
         functionName: "stake",
         args: [amount],
         enabled: userInfo.isSuccess
-            && amount.gt(0)
-            && amount.lte(userInfo.data?.staking.balance ?? 0)
-            && amount.lte(userInfo.data?.staking.allowance ?? 0),
+            && amount > 0
+            && amount <= (userInfo.data?.staking.balance ?? 0n)
+            && amount <= (userInfo.data?.staking.allowance ?? 0n),
     })
 
     const action = useContractWrite(prepare.config)
@@ -64,9 +63,9 @@ export function StakeForm() {
     const [amountStr, setAmountStr] = useBigNumberInput(amount, setAmount, tokenInfo.data?.staking.decimals ?? 0)
     const hasMounted = useHasMounted()
 
-    const allowance = userInfo.data?.staking.allowance ?? BigNumber.from(0)
+    const allowance = userInfo.data?.staking.allowance ?? 0n
 
-    const insufficientAllowance = amount.gt(allowance)
+    const insufficientAllowance = amount > allowance
 
     return (
         <div className="flex flex-col gap-2">
@@ -90,11 +89,11 @@ export function StakeForm() {
     )
 }
 
-function MaxButton({ setAmount }: { setAmount: (amount: BigNumber) => void }) {
+function MaxButton({ setAmount }: { setAmount: (amount: bigint) => void }) {
     const userInfo = useUserInfo()
     const hasMounted = useHasMounted()
 
-    const balance = userInfo.data?.staking.balance ?? BigNumber.from(0)
+    const balance = userInfo.data?.staking.balance ?? 0n
 
     const disabled = !hasMounted || !userInfo.isSuccess;
 
@@ -119,14 +118,14 @@ function ApproveButton() {
     )
 }
 
-function StakeButton({ amount, reset }: { amount: BigNumber, reset: () => void }) {
+function StakeButton({ amount, reset }: { amount: bigint, reset: () => void }) {
     const userInfo = useUserInfo()
     const { prepare, action, wait } = useStake(amount, reset)
 
-    const balance = userInfo.data?.staking.balance ?? BigNumber.from(0)
+    const balance = userInfo.data?.staking.balance ?? 0n
 
-    const zeroAmount = amount.eq(0)
-    const insufficientBalance = amount.gt(balance)
+    const zeroAmount = amount === 0n
+    const insufficientBalance = amount > balance
 
     const preparing = prepare.isLoading || prepare.isError || !action.write
     const sending = action.isLoading || wait.isLoading

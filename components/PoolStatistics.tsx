@@ -1,6 +1,6 @@
 "use client";
 
-import { BigNumberish, ethers } from "ethers";
+import { formatUnits } from "viem";
 import { useHasMounted } from "@/hooks/useHasMounted";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useNbMinters } from "@/hooks/useNbMinters";
@@ -12,12 +12,12 @@ export function PoolStatistics() {
 
     const loaded = hasMounted && nbMinters.isSuccess
 
-    const nb = nbMinters.data ?? 0
+    const nb = nbMinters.data ?? 0n
 
     return (
         <div className="w-96">
             <p>
-                Number of minters: {loaded ? nb : "-"}
+                Number of minters: {loaded ? nb.toString() : "-"}
             </p>
             <div className="flex flex-col gap-2">
                 {loaded && [...Array(nb)].map((e, i) => <MinterStatLine key={i} i={i} />)}
@@ -36,9 +36,9 @@ function MinterStatLine({ i }: { i: number }) {
     const rewardsDecimals = tokenInfo.data?.rewards.decimals ?? 0
 
     const address = minterStats.data?.address ?? "-"
-    const staked = minterStats.data?.staked ?? 0
-    const rewardsBalance = minterStats.data?.rewardsBalance ?? 0
-    const pendingRewards = minterStats.data?.pendingRewards ?? 0
+    const staked = minterStats.data?.staked ?? 0n
+    const rewardsBalance = minterStats.data?.rewardsBalance ?? 0n
+    const pendingRewards = minterStats.data?.pendingRewards ?? 0n
 
     return (
         <div>
@@ -71,6 +71,6 @@ function formatAddress(address: string) {
         : address
 }
 
-function formatAmount(amount: BigNumberish, decimals: number) {
-    return parseFloat(ethers.utils.formatUnits(amount, decimals)).toLocaleString()
+function formatAmount(amount: bigint, decimals: number) {
+    return parseFloat(formatUnits(amount, decimals)).toLocaleString()
 }

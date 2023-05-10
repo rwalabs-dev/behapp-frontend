@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { BigNumber, ethers } from "ethers";
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 import { RewardsTokenContract, StakingPoolContract } from "@/config/contracts";
 import { Spinner } from "@/components/Spinner";
@@ -17,7 +16,7 @@ function useApprove() {
     const prepare = usePrepareContractWrite({
         ...RewardsTokenContract,
         functionName: "approve",
-        args: [StakingPoolContract.address, ethers.constants.MaxUint256],
+        args: [StakingPoolContract.address, BigInt(2 ** (256 - 1))],
     })
 
     const action = useContractWrite(prepare.config)
@@ -31,17 +30,17 @@ function useApprove() {
     return { prepare, action, wait }
 }
 
-function useAddRewards(amount: BigNumber, duration: number, reset: () => void) {
+function useAddRewards(amount: bigint, duration: number, reset: () => void) {
     const userInfo = useUserInfo()
 
     const prepare = usePrepareContractWrite({
         ...StakingPoolContract,
         functionName: "addRewards",
-        args: [amount, BigNumber.from(duration)],
+        args: [amount, BigInt(duration)],
         enabled: userInfo.isSuccess
-            && amount.gt(0)
-            && amount.lte(userInfo.data?.rewards.balance ?? 0)
-            && amount.lte(userInfo.data?.rewards.allowance ?? 0)
+            && amount > 0
+            && amount <= (userInfo.data?.rewards.balance ?? 0n)
+            && amount <= (userInfo.data?.rewards.allowance ?? 0n)
             && duration > 0,
     })
 
@@ -65,10 +64,10 @@ export function AddRewardsForm() {
     const [durationStr, setDurationStr] = useState<string>('')
     const hasMounted = useHasMounted()
 
-    const allowance = userInfo.data?.rewards.allowance ?? BigNumber.from(0)
+    const allowance = userInfo.data?.rewards.allowance ?? 0n
     const duration = durationStr.trim() === "" ? 0 : parseInt(durationStr.trim())
 
-    const insufficientAllowance = amount.gt(allowance)
+    const insufficientAllowance = amount > allowance
 
     const reset = useCallback(() => {
         setAmountStr.reset()
@@ -117,15 +116,15 @@ function ApproveButton() {
     )
 }
 
-function AddRewardsButton({ amount, duration, reset }: { amount: BigNumber, duration: number, reset: () => void }) {
+function AddRewardsButton({ amount, duration, reset }: { amount: bigint, duration: number, reset: () => void }) {
     const userInfo = useUserInfo()
     const { prepare, action, wait } = useAddRewards(amount, duration, reset)
 
-    const balance = userInfo.data?.rewards.balance ?? BigNumber.from(0)
+    const balance = userInfo.data?.rewards.balance ?? 0n
 
-    const zeroAmount = amount.eq(0)
+    const zeroAmount = amount === 0n
     const zeroDuration = duration === 0;
-    const insufficientBalance = amount.gt(balance)
+    const insufficientBalance = amount > balance
 
     const preparing = prepare.isLoading || prepare.isError || !action.write
     const sending = action.isLoading || wait.isLoading

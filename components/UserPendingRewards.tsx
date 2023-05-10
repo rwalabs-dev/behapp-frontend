@@ -1,6 +1,6 @@
 "use client";
 
-import { BigNumber, ethers } from "ethers";
+import { formatUnits } from "viem";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
 import { usePendingRewards } from "@/hooks/usePendingRewards";
@@ -14,11 +14,11 @@ export function UserPendingRewards() {
 
     const symbol = tokenInfo.data?.rewards.symbol ?? ""
     const decimals = tokenInfo.data?.rewards.decimals ?? 0
-    const amount = pendingRewards.data ?? BigNumber.from(0)
+    const amount = pendingRewards.data ?? 0n
 
     return (
         <span>
-            {loaded ? `${parseFloat(ethers.utils.formatUnits(amount, decimals)).toLocaleString()} \$${symbol}` : '-'}
+            {loaded ? `${parseFloat(formatUnits(amount, decimals)).toLocaleString()} \$${symbol}` : '-'}
         </span>
     )
 }

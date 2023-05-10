@@ -1,6 +1,5 @@
 "use client";
 
-import { BigNumber } from "ethers";
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 import { StakingPoolContract } from "@/config/contracts";
 import { Spinner } from "@/components/Spinner";
@@ -10,7 +9,7 @@ import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
 import { useBigNumber, useBigNumberInput } from "@/modules/bigNumber";
 
-function useUnstake(amount: BigNumber, reset: () => void) {
+function useUnstake(amount: bigint, reset: () => void) {
     const userInfo = useUserInfo()
     const poolInfo = usePoolInfo()
 
@@ -19,8 +18,8 @@ function useUnstake(amount: BigNumber, reset: () => void) {
         functionName: "unstake",
         args: [amount],
         enabled: userInfo.isSuccess
-            && amount.gt(0)
-            && amount.lte(userInfo.data?.staking.staked ?? 0),
+            && amount > 0
+            && amount <= (userInfo.data?.staking.staked ?? 0),
     })
 
     const action = useContractWrite(prepare.config)
@@ -59,11 +58,11 @@ export function UnstakeForm() {
     )
 }
 
-function MaxButton({ setAmount }: { setAmount: (amount: BigNumber) => void }) {
+function MaxButton({ setAmount }: { setAmount: (amount: bigint) => void }) {
     const userInfo = useUserInfo()
     const hasMounted = useHasMounted()
 
-    const staked = userInfo.data?.staking.staked ?? BigNumber.from(0)
+    const staked = userInfo.data?.staking.staked ?? 0n
 
     const disabled = !hasMounted || !userInfo.isSuccess;
 
@@ -74,14 +73,14 @@ function MaxButton({ setAmount }: { setAmount: (amount: BigNumber) => void }) {
     )
 }
 
-function UnstakeButton({ amount, reset }: { amount: BigNumber, reset: () => void }) {
+function UnstakeButton({ amount, reset }: { amount: bigint, reset: () => void }) {
     const userInfo = useUserInfo()
     const { prepare, action, wait } = useUnstake(amount, reset)
 
-    const staked = userInfo.data?.staking.staked ?? BigNumber.from(0)
+    const staked = userInfo.data?.staking.staked ?? 0n
 
-    const zeroAmount = amount.eq(0)
-    const insufficientStaked = amount.gt(staked)
+    const zeroAmount = amount === 0n
+    const insufficientStaked = amount > staked
 
     const preparing = prepare.isLoading || prepare.isError || !action.write
     const sending = action.isLoading || wait.isLoading

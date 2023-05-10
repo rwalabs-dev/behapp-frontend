@@ -1,23 +1,23 @@
-import { BigNumber, utils } from "ethers"
-import { useState, useMemo, useCallback } from "react"
+import { formatUnits, parseUnits } from "viem";
+import { useState, useMemo, useCallback } from "react";
 
 // parse any string as a BigNumber, fallback to zero
 const getBigNumberFromStr = (value: string, decimals: number) => {
     try {
-        return utils.parseUnits(value, decimals)
+        return parseUnits(value as `${number}`, decimals)
     } catch (e) {
-        return BigNumber.from(0)
+        return 0n
     }
 }
 
 // hook to ensure state change only when the BigNumber underlying value actually changes
-type UseBigNumberState = [BigNumber, (newN: BigNumber) => void]
+type UseBigNumberState = [bigint, (newN: bigint) => void]
 
 export const useBigNumber = (init: number): UseBigNumberState => {
-    const [value, setValue] = useState<BigNumber>(BigNumber.from(init))
+    const [value, setValue] = useState<bigint>(BigInt(init))
 
-    const setNewN = useCallback((newN: BigNumber) => {
-        setValue(prev => prev.eq(newN) ? prev : newN)
+    const setNewN = useCallback((newN: bigint) => {
+        setValue(prev => prev === newN ? prev : newN)
     }, [])
 
     return [value, setNewN]
@@ -28,22 +28,22 @@ type UseBigNumberInputState = [
     string,
     {
         reset: () => void
-        fromBigNumber: (newN: BigNumber) => void
+        fromBigNumber: (newN: bigint) => void
         fromStr: (newstr: string) => void
     }
 ]
 
-export const useBigNumberInput = (value: BigNumber, setValue: (n: BigNumber) => void, decimals: number): UseBigNumberInputState => {
-    const [valueStr, setValueStr] = useState<string>(value.eq(0) ? '' : utils.formatUnits(value, decimals))
+export const useBigNumberInput = (value: bigint, setValue: (n: bigint) => void, decimals: number): UseBigNumberInputState => {
+    const [valueStr, setValueStr] = useState<string>(value === 0n ? '' : formatUnits(value, decimals))
 
     const reset = useCallback(() => {
-        setValue(BigNumber.from(0))
+        setValue(0n)
         setValueStr('')
     }, [setValue])
 
-    const fromBigNumber = useCallback((newN: BigNumber) => {
+    const fromBigNumber = useCallback((newN: bigint) => {
         setValue(newN)
-        setValueStr(formatNoZeroCent(utils.formatUnits(newN, decimals)))
+        setValueStr(formatNoZeroCent(formatUnits(newN, decimals)))
     }, [setValue, decimals])
 
     const fromStr = useCallback((newStr: string) => {
@@ -66,6 +66,6 @@ const formatNoZeroCent = (value: string) => {
 }
 
 // shortcut to format a bignumber as a locale string
-export const format = (value: BigNumber, decimals: number) => {
-    return parseFloat(utils.formatUnits(value, decimals)).toLocaleString()
+export const format = (value: bigint, decimals: number) => {
+    return parseFloat(formatUnits(value, decimals)).toLocaleString()
 }
