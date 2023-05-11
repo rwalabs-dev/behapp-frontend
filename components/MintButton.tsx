@@ -6,6 +6,7 @@ import { Spinner } from "@/components/Spinner";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
+import { StakingTokenSymbol } from "@/components/StakingTokenSymbol";
 
 const amount = 100000n
 
@@ -43,7 +44,7 @@ export function MintButton() {
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-secondary w-full">
-            <Spinner enabled={sending} /> Mint staking tokens
+            <Spinner enabled={sending} /> Mint&nbsp;<StakingTokenSymbol />&nbsp;tokens
         </button>
     )
 }
