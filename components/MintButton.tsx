@@ -44,7 +44,7 @@ export function MintButton() {
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-secondary w-full">
-            <Spinner enabled={sending} /> Mint&nbsp;<StakingTokenSymbol />&nbsp;tokens
+            {!hasMounted ? <Spinner enabled /> : <><Spinner enabled={sending} /> Mint&nbsp;<StakingTokenSymbol />&nbsp;tokens</>}
         </button>
     )
 }
