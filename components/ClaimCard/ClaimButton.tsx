@@ -42,7 +42,7 @@ export function ClaimButton() {
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
-            <Spinner enabled={sending} /> {!hasMounted || zeroAmount ? 'No rewards' : 'Claim rewards'}
+            <Spinner enabled={sending} /> {!hasMounted || zeroAmount ? 'No pending rewards' : 'Claim rewards'}
         </button>
     )
 }

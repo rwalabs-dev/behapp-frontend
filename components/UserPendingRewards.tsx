@@ -12,13 +12,12 @@ export function UserPendingRewards() {
 
     const loaded = hasMounted && tokenInfo.isSuccess && pendingRewards.isSuccess
 
-    const symbol = tokenInfo.data?.rewards.symbol ?? ""
     const decimals = tokenInfo.data?.rewards.decimals ?? 0
     const amount = pendingRewards.data ?? 0n
 
     return (
         <span>
-            {loaded ? `${parseFloat(formatUnits(amount, decimals)).toLocaleString()} \$${symbol}` : '-'}
+            {loaded ? `${parseFloat(formatUnits(amount, decimals)).toLocaleString()}` : '-'}
         </span>
     )
 }

@@ -12,13 +12,12 @@ export function UserStakingTokenBalance() {
 
     const loaded = hasMounted && tokenInfo.isSuccess && userInfo.isSuccess
 
-    const symbol = tokenInfo.data?.staking.symbol ?? ""
     const decimals = tokenInfo.data?.staking.decimals ?? 0
     const balance = userInfo.data?.staking.balance ?? 0n
 
     return (
         <span>
-            {loaded ? `${parseFloat(formatUnits(balance, decimals)).toLocaleString()} \$${symbol}` : '-'}
+            {loaded ? `${parseFloat(formatUnits(balance, decimals)).toLocaleString()}` : '-'}
         </span>
     )
 }

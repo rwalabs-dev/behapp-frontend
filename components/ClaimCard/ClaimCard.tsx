@@ -1,15 +1,12 @@
-import { UserPendingRewards } from "@/components/UserPendingRewards";
-import { UserRewardsTokenBalance } from "@/components/UserRewardsTokenBalance";
 import { ClaimButton } from "./ClaimButton";
+import { RewardTokenSymbol } from "@/components/RewardTokenSymbol";
+import { UserPendingRewards } from "@/components/UserPendingRewards";
 
 export function ClaimCard() {
     return (
         <div className="card card-bordered w-96">
             <div className="card-body">
-                <div className="card-title">Claim Rewards</div>
-                <p className="flex justify-between">
-                    Balance: <span className="font-medium"><UserRewardsTokenBalance /></span>
-                </p>
+                <div className="card-title">Claim <RewardTokenSymbol /> Rewards</div>
                 <p className="flex justify-between">
                     Pending rewards: <span className="font-medium"><UserPendingRewards /></span>
                 </p>
@@ -17,6 +14,6 @@ export function ClaimCard() {
                     <ClaimButton />
                 </div>
             </div>
-        </div >
+        </div>
     )
 }
