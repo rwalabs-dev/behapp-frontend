@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 import { RewardsTokenContract, StakingPoolContract } from "@/config/contracts";
 import { Spinner } from "@/components/Spinner";
+import { useDebounce } from "@/hooks/useDebounce";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
@@ -117,6 +118,8 @@ function ApproveButton() {
 
 function AddRewardsButton({ amount, duration, reset }: { amount: bigint, duration: number, reset: () => void }) {
     const userInfo = useUserInfo()
+    const [debouncedAmount, debouncing1] = useDebounce(amount)
+    const [debouncedDuration, debouncing2] = useDebounce(duration)
     const { prepare, action, wait } = useAddRewards(amount, duration, reset)
 
     const balance = userInfo.data?.rewards.balance ?? 0n
@@ -127,7 +130,14 @@ function AddRewardsButton({ amount, duration, reset }: { amount: bigint, duratio
 
     const preparing = prepare.isLoading || prepare.isError || !action.write
     const sending = action.isLoading || wait.isLoading
-    const disabled = zeroAmount || zeroDuration || insufficientBalance || !userInfo.isSuccess || preparing || sending
+    const disabled = zeroAmount
+        || zeroDuration
+        || insufficientBalance
+        || !userInfo.isSuccess
+        || preparing
+        || sending
+        || debouncing1
+        || debouncing2
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">

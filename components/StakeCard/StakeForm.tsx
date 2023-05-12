@@ -3,6 +3,7 @@
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 import { StakingTokenContract, StakingPoolContract } from "@/config/contracts";
 import { Spinner } from "@/components/Spinner";
+import { useDebounce } from "@/hooks/useDebounce";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { usePoolInfo } from "@/hooks/usePoolInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
@@ -120,7 +121,8 @@ function ApproveButton() {
 
 function StakeButton({ amount, reset }: { amount: bigint, reset: () => void }) {
     const userInfo = useUserInfo()
-    const { prepare, action, wait } = useStake(amount, reset)
+    const [debouncedAmount, debouncing] = useDebounce(amount)
+    const { prepare, action, wait } = useStake(debouncedAmount, reset)
 
     const balance = userInfo.data?.staking.balance ?? 0n
 
@@ -129,7 +131,7 @@ function StakeButton({ amount, reset }: { amount: bigint, reset: () => void }) {
 
     const preparing = prepare.isLoading || prepare.isError || !action.write
     const sending = action.isLoading || wait.isLoading
-    const disabled = zeroAmount || insufficientBalance || !userInfo.isSuccess || preparing || sending
+    const disabled = zeroAmount || insufficientBalance || !userInfo.isSuccess || preparing || sending || debouncing
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
