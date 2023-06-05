@@ -18,7 +18,7 @@ export function usePoolInfo() {
             },
             {
                 ...StakingPoolContract,
-                functionName: "ADD_REWARDS_ROLE",
+                functionName: "OPERATOR_ROLE",
             }
         ],
         watch: true,
