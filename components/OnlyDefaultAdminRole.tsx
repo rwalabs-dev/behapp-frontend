@@ -1,20 +1,18 @@
 "use client";
 
 import { useAccount, useContractRead } from "wagmi";
-import { usePoolInfo } from "@/hooks/usePoolInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
 import { StakingPoolContract } from "@/config/contracts";
 
-export function OnlyAddRewardsRole({ children }: { children: React.ReactNode }) {
+export function OnlyDefaultAdminRole({ children }: { children: React.ReactNode }) {
     const { address } = useAccount()
-    const poolInfo = usePoolInfo()
     const hasMounted = useHasMounted()
 
     const hasRole = useContractRead({
         ...StakingPoolContract,
         functionName: "hasRole",
-        args: [poolInfo.data?.addRewardsRole ?? "0x", address ?? "0x"],
-        enabled: !!address && poolInfo.isSuccess,
+        args: ["0x0000000000000000000000000000000000000000000000000000000000000000", address ?? "0x"],
+        enabled: !!address,
     })
 
     return hasMounted && hasRole.isSuccess && hasRole.data ? <>{children}</> : null

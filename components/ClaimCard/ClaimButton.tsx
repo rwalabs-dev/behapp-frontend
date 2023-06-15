@@ -4,7 +4,7 @@ import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from
 import { StakingPoolContract } from "@/config/contracts";
 import { Spinner } from "@/components/Spinner";
 import { useUserInfo } from "@/hooks/useUserInfo";
-import { usePendingRewards } from "@/hooks/usePendingRewards";
+import { useUserRewards } from "@/hooks/useUserRewards";
 import { useHasMounted } from "@/hooks/useHasMounted";
 
 function useClaim() {
@@ -27,18 +27,18 @@ function useClaim() {
 }
 
 export function ClaimButton() {
-    const pendingRewards = usePendingRewards()
+    const userRewards = useUserRewards()
     const { prepare, action, wait } = useClaim()
     const hasMounted = useHasMounted()
 
 
-    const amount = pendingRewards.data ?? 0n
+    const amount = userRewards.data?.pendingRewards ?? 0n
 
     const zeroAmount = amount === 0n
 
     const preparing = prepare.isLoading || prepare.isError || !action.write
     const sending = action.isLoading || wait.isLoading
-    const disabled = !hasMounted || zeroAmount || !pendingRewards.isSuccess || preparing || sending
+    const disabled = !hasMounted || zeroAmount || !userRewards.isSuccess || preparing || sending
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">

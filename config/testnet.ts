@@ -1,21 +1,25 @@
 import { Chain } from "viem";
 
+if (!process.env.NEXT_PUBLIC_TESTNET_CHAIN_ID) throw Error("NEXT_PUBLIC_TESTNET_CHAIN_ID env variable must be set");
+if (!process.env.NEXT_PUBLIC_TESTNET_RPC_URL) throw Error("NEXT_PUBLIC_TESTNET_RPC_URL env variable must be set");
+if (!process.env.NEXT_PUBLIC_TESTNET_EXPLORER_URL) throw Error("NEXT_PUBLIC_TESTNET_EXPLORER_URL env variable must be set");
+
 export const testnet = {
-    id: 9174,
+    id: parseInt(process.env.NEXT_PUBLIC_TESTNET_CHAIN_ID),
     name: 'Beh testnet',
     network: 'arbitrum fork',
     nativeCurrency: { name: 'BB ETH', symbol: 'BBETH', decimals: 18 },
     rpcUrls: {
         default: {
-            http: ['https://rpc.buildbear.io/future-chewbacca-1a5b024e'],
+            http: [process.env.NEXT_PUBLIC_TESTNET_RPC_URL],
         },
         public: {
-            http: ['https://rpc.buildbear.io/future-chewbacca-1a5b024e'],
+            http: [process.env.NEXT_PUBLIC_TESTNET_RPC_URL],
         },
     },
     blockExplorers: {
-        etherscan: { name: 'Buildbear scan', url: 'https://explorer.buildbear.io/future-chewbacca-1a5b024e' },
-        default: { name: 'Buildbear scan', url: 'https://explorer.buildbear.io/future-chewbacca-1a5b024e' },
+        etherscan: { name: 'Buildbear scan', url: process.env.NEXT_PUBLIC_TESTNET_EXPLORER_URL },
+        default: { name: 'Buildbear scan', url: process.env.NEXT_PUBLIC_TESTNET_EXPLORER_URL },
     },
     contracts: {
         multicall3: {

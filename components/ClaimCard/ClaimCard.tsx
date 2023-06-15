@@ -1,6 +1,7 @@
 import { ClaimButton } from "./ClaimButton";
 import { RewardTokenSymbol } from "@/components/RewardTokenSymbol";
 import { UserPendingRewards } from "@/components/UserPendingRewards";
+import { UserRemainingRewards } from "@/components/UserRemainingRewards";
 
 export function ClaimCard() {
     return (
@@ -9,6 +10,9 @@ export function ClaimCard() {
                 <div className="card-title">Claim <RewardTokenSymbol /> Rewards</div>
                 <p className="flex justify-between">
                     Pending rewards: <span className="font-medium"><UserPendingRewards /></span>
+                </p>
+                <p className="flex justify-between">
+                    Remaining rewards: <span className="font-medium"><UserRemainingRewards /></span>
                 </p>
                 <div>
                     <ClaimButton />

@@ -4,7 +4,7 @@ import { MintButton } from "@/components/MintButton";
 import { PoolInfoCard } from "@/components/PoolInfoCard";
 import { UserInfoCard } from "@/components/UserInfoCard";
 import { AddRewardsCard } from "@/components/AddRewardsCard";
-import { OnlyAddRewardsRole } from "@/components/OnlyAddRewardsRole";
+import { OnlyDefaultAdminRole } from "@/components/OnlyDefaultAdminRole";
 import { WalletConnectButton } from "@/components/WalletConnectButton";
 
 export default function Home() {
@@ -26,11 +26,11 @@ export default function Home() {
                 <StakeCard />
                 <ClaimCard />
             </div>
-            <OnlyAddRewardsRole>
+            <OnlyDefaultAdminRole>
                 <div className="mx-auto">
                     <AddRewardsCard />
                 </div>
-            </OnlyAddRewardsRole>
+            </OnlyDefaultAdminRole>
         </main>
     )
 }
