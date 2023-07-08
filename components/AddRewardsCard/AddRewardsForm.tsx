@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useCallback } from "react";
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 import { RewardsTokenContract, StakingPoolContract } from "@/config/contracts";
@@ -9,6 +10,8 @@ import { useUserInfo } from "@/hooks/useUserInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
 import { useBigNumber, useBigNumberInput } from "@/modules/bigNumber";
+
+const d90days = 90 * 24 * 60 * 60
 
 function useApprove() {
     const userInfo = useUserInfo()
@@ -77,6 +80,9 @@ export function AddRewardsForm() {
     return (
         <div className="flex flex-col gap-2">
             <div>
+                <Link href="/" className="link">Back home</Link>
+            </div>
+            <div className="form-control">
                 <input
                     type="text"
                     className="input input-primary w-full"
@@ -84,14 +90,19 @@ export function AddRewardsForm() {
                     onChange={e => setAmountStr.fromStr(e.target.value.trim())}
                 />
             </div>
-            <div>
-                <input
-                    type="number"
-                    step="1"
-                    className="input input-primary w-full"
-                    value={durationStr}
-                    onChange={e => setDurationStr(e.target.value)}
-                />
+            <div className="form-control">
+                <div className="input-group">
+                    <input
+                        type="number"
+                        step="1"
+                        className="input input-primary w-full"
+                        value={durationStr}
+                        onChange={e => setDurationStr(e.target.value)}
+                    />
+                    <button onClick={() => setDurationStr(d90days.toString())} className="btn btn-primary w-16">
+                        90 days
+                    </button>
+                </div>
             </div>
             <div>
                 {hasMounted && insufficientAllowance
@@ -120,7 +131,7 @@ function AddRewardsButton({ amount, duration, reset }: { amount: bigint, duratio
     const userInfo = useUserInfo()
     const [debouncedAmount, debouncing1] = useDebounce(amount)
     const [debouncedDuration, debouncing2] = useDebounce(duration)
-    const { prepare, action, wait } = useAddRewards(amount, duration, reset)
+    const { prepare, action, wait } = useAddRewards(debouncedAmount, debouncedDuration, reset)
 
     const balance = userInfo.data?.rewards.balance ?? 0n
 

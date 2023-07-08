@@ -45,6 +45,56 @@ const abi = [
     },
     {
         "anonymous": false,
+        "inputs": [],
+        "name": "DefaultAdminDelayChangeCanceled",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint48",
+                "name": "newDelay",
+                "type": "uint48"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint48",
+                "name": "effectSchedule",
+                "type": "uint48"
+            }
+        ],
+        "name": "DefaultAdminDelayChangeScheduled",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [],
+        "name": "DefaultAdminTransferCanceled",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "newAdmin",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint48",
+                "name": "acceptSchedule",
+                "type": "uint48"
+            }
+        ],
+        "name": "DefaultAdminTransferScheduled",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
         "inputs": [
             {
                 "indexed": true,
@@ -220,6 +270,26 @@ const abi = [
         "type": "event"
     },
     {
+        "inputs": [],
+        "name": "OPERATOR_ROLE",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "",
+                "type": "bytes32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "acceptDefaultAdminTransfer",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "uint256",
@@ -238,10 +308,82 @@ const abi = [
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "newAdmin",
+                "type": "address"
+            }
+        ],
+        "name": "beginDefaultAdminTransfer",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "cancelDefaultAdminTransfer",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint48",
+                "name": "newDelay",
+                "type": "uint48"
+            }
+        ],
+        "name": "changeDefaultAdminDelay",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "claim",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "defaultAdmin",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "defaultAdminDelay",
+        "outputs": [
+            {
+                "internalType": "uint48",
+                "name": "",
+                "type": "uint48"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "defaultAdminDelayIncreaseWait",
+        "outputs": [
+            {
+                "internalType": "uint48",
+                "name": "",
+                "type": "uint48"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -265,49 +407,6 @@ const abi = [
                 "internalType": "bytes32",
                 "name": "",
                 "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "uint256",
-                "name": "index",
-                "type": "uint256"
-            }
-        ],
-        "name": "getRoleMember",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            }
-        ],
-        "name": "getRoleMemberCount",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -350,6 +449,42 @@ const abi = [
                 "internalType": "bool",
                 "name": "",
                 "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "pendingDefaultAdmin",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "newAdmin",
+                "type": "address"
+            },
+            {
+                "internalType": "uint48",
+                "name": "acceptSchedule",
+                "type": "uint48"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "pendingDefaultAdminDelay",
+        "outputs": [
+            {
+                "internalType": "uint48",
+                "name": "newDelay",
+                "type": "uint48"
+            },
+            {
+                "internalType": "uint48",
+                "name": "effectSchedule",
+                "type": "uint48"
             }
         ],
         "stateMutability": "view",
@@ -486,6 +621,13 @@ const abi = [
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "rollbackDefaultAdminDelay",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {

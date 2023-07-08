@@ -23,16 +23,6 @@ const { connectors } = getDefaultWallets({
     chains,
 });
 
-// const connectors = connectorsForWallets([
-//     {
-//         groupName: 'Partner',
-//         wallets: [
-//             imotaWallet({ projectId, chains }),
-//         ],
-//     },
-//     ...wallets,
-// ]);
-
 export const wagmiConfig = createConfig({
     autoConnect: true,
     connectors,
