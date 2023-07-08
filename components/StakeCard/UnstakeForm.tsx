@@ -1,14 +1,14 @@
 "use client";
 
-import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
-import { StakingPoolContract } from "@/config/contracts";
 import { Spinner } from "@/components/Spinner";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { usePoolInfo } from "@/hooks/usePoolInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
-import { useBigNumber, useBigNumberInput } from "@/modules/bigNumber";
+import { useBigintInput } from "@/hooks/useBigintInput";
+import { StakingPoolContract } from "@/config/contracts";
+import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 
 function useUnstake(amount: bigint, reset: () => void) {
     const userInfo = useUserInfo()
@@ -38,8 +38,7 @@ function useUnstake(amount: bigint, reset: () => void) {
 
 export function UnstakeForm() {
     const tokenInfo = useTokenInfo()
-    const [amount, setAmount] = useBigNumber(0)
-    const [amountStr, setAmountStr] = useBigNumberInput(amount, setAmount, tokenInfo.data?.staking.decimals ?? 0)
+    const amount = useBigintInput(0n, tokenInfo.data?.staking.decimals ?? 0)
 
     return (
         <div className="flex flex-col gap-2">
@@ -47,13 +46,13 @@ export function UnstakeForm() {
                 <input
                     type="text"
                     className="input input-primary w-full"
-                    value={amountStr}
-                    onChange={e => setAmountStr.fromStr(e.target.value.trim())}
+                    value={amount.valueStr}
+                    onChange={e => amount.setValueStr(e.target.value.trim())}
                 />
-                <MaxButton setAmount={setAmountStr.fromBigNumber} />
+                <MaxButton setAmount={amount.setValue} />
             </div>
             <div>
-                <UnstakeButton amount={amount} reset={setAmountStr.reset} />
+                <UnstakeButton amount={amount.value} reset={amount.reset} />
             </div>
         </div>
     )
@@ -82,15 +81,15 @@ function UnstakeButton({ amount, reset }: { amount: bigint, reset: () => void })
     const staked = userInfo.data?.staking.staked ?? 0n
 
     const zeroAmount = amount === 0n
-    const insufficientStaked = amount > staked
+    const insufficientStake = amount > staked
 
     const preparing = prepare.isLoading || prepare.isError || !action.write
     const sending = action.isLoading || wait.isLoading
-    const disabled = zeroAmount || insufficientStaked || !userInfo.isSuccess || preparing || sending || debouncing
+    const disabled = zeroAmount || insufficientStake || !userInfo.isSuccess || preparing || sending || debouncing
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
-            <Spinner enabled={sending} /> {insufficientStaked ? 'Insufficient stake' : 'Unstake tokens'}
+            <Spinner enabled={sending} /> {insufficientStake ? 'Insufficient stake' : 'Unstake tokens'}
         </button>
     )
 }

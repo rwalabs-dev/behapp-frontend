@@ -1,14 +1,14 @@
 "use client";
 
-import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
-import { StakingTokenContract, StakingPoolContract } from "@/config/contracts";
 import { Spinner } from "@/components/Spinner";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { usePoolInfo } from "@/hooks/usePoolInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
-import { useBigNumber, useBigNumberInput } from "@/modules/bigNumber";
+import { useBigintInput } from "@/hooks/useBigintInput";
+import { StakingTokenContract, StakingPoolContract } from "@/config/contracts";
+import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 
 function useApprove() {
     const userInfo = useUserInfo()
@@ -58,15 +58,8 @@ function useStake(amount: bigint, reset: () => void) {
 }
 
 export function StakeForm() {
-    const userInfo = useUserInfo()
     const tokenInfo = useTokenInfo()
-    const [amount, setAmount] = useBigNumber(0)
-    const [amountStr, setAmountStr] = useBigNumberInput(amount, setAmount, tokenInfo.data?.staking.decimals ?? 0)
-    const hasMounted = useHasMounted()
-
-    const allowance = userInfo.data?.staking.allowance ?? 0n
-
-    const insufficientAllowance = amount > allowance
+    const amount = useBigintInput(0n, tokenInfo.data?.staking.decimals ?? 0)
 
     return (
         <div className="flex flex-col gap-2">
@@ -75,16 +68,14 @@ export function StakeForm() {
                     <input
                         type="text"
                         className="input input-primary w-full"
-                        value={amountStr}
-                        onChange={e => setAmountStr.fromStr(e.target.value.trim())}
+                        value={amount.valueStr}
+                        onChange={e => amount.setValueStr(e.target.value.trim())}
                     />
-                    <MaxButton setAmount={setAmountStr.fromBigNumber} />
+                    <MaxButton setAmount={amount.setValue} />
                 </div>
             </div>
             <div>
-                {hasMounted && insufficientAllowance
-                    ? <ApproveButton />
-                    : <StakeButton amount={amount} reset={setAmountStr.reset} />}
+                <SubmitButton amount={amount.value} reset={amount.reset} />
             </div>
         </div>
     )
@@ -105,6 +96,36 @@ function MaxButton({ setAmount }: { setAmount: (amount: bigint) => void }) {
     )
 }
 
+function SubmitButton({ amount, reset }: { amount: bigint, reset: () => void }) {
+    const userInfo = useUserInfo()
+    const hasMounted = useHasMounted()
+
+    const balance = userInfo.data?.staking.balance ?? 0n
+    const allowance = userInfo.data?.staking.allowance ?? 0n
+    const insufficientBalance = amount > balance
+    const insufficientAllowance = amount > allowance
+
+    if (!hasMounted) {
+        return (
+            <button disabled className="btn btn-primary w-full">
+                -
+            </button>
+        )
+    }
+
+    if (insufficientBalance) {
+        return (
+            <button disabled className="btn btn-primary w-full">
+                Insufficient balance
+            </button>
+        )
+    }
+
+    return insufficientAllowance
+        ? <ApproveButton />
+        : <StakeButton amount={amount} reset={reset} />
+}
+
 function ApproveButton() {
     const { prepare, action, wait } = useApprove()
 
@@ -114,28 +135,24 @@ function ApproveButton() {
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
-            <Spinner enabled={sending} /> Approve contract
+            <Spinner enabled={sending} />&nbsp;Approve contract
         </button>
     )
 }
 
 function StakeButton({ amount, reset }: { amount: bigint, reset: () => void }) {
-    const userInfo = useUserInfo()
     const [debouncedAmount, debouncing] = useDebounce(amount)
     const { prepare, action, wait } = useStake(debouncedAmount, reset)
 
-    const balance = userInfo.data?.staking.balance ?? 0n
-
     const zeroAmount = amount === 0n
-    const insufficientBalance = amount > balance
 
     const preparing = prepare.isLoading || prepare.isError || !action.write
     const sending = action.isLoading || wait.isLoading
-    const disabled = zeroAmount || insufficientBalance || !userInfo.isSuccess || preparing || sending || debouncing
+    const disabled = zeroAmount || preparing || sending || debouncing
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
-            <Spinner enabled={sending} /> {insufficientBalance ? 'Insufficient balance' : 'Stake tokens'}
+            <Spinner enabled={sending} />&nbsp;Stake tokens
         </button>
     )
 }

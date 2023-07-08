@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { useState, useCallback } from "react";
-import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
-import { RewardsTokenContract, StakingPoolContract } from "@/config/contracts";
 import { Spinner } from "@/components/Spinner";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
-import { useBigNumber, useBigNumberInput } from "@/modules/bigNumber";
+import { useBigintInput } from "@/hooks/useBigintInput";
+import { RewardsTokenContract, StakingPoolContract } from "@/config/contracts";
+import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 
 const d90days = 90 * 24 * 60 * 60
 
@@ -60,22 +60,16 @@ function useAddRewards(amount: bigint, duration: number, reset: () => void) {
 }
 
 export function AddRewardsForm() {
-    const userInfo = useUserInfo()
     const tokenInfo = useTokenInfo()
-    const [amount, setAmount] = useBigNumber(0)
-    const [amountStr, setAmountStr] = useBigNumberInput(amount, setAmount, tokenInfo.data?.rewards.decimals ?? 0)
+    const amount = useBigintInput(0n, tokenInfo.data?.rewards.decimals ?? 0)
     const [durationStr, setDurationStr] = useState<string>('')
-    const hasMounted = useHasMounted()
 
-    const allowance = userInfo.data?.rewards.allowance ?? 0n
     const duration = durationStr.trim() === "" ? 0 : parseInt(durationStr.trim())
 
-    const insufficientAllowance = amount > allowance
-
     const reset = useCallback(() => {
-        setAmountStr.reset()
+        amount.reset()
         setDurationStr('')
-    }, [setAmountStr, setDurationStr])
+    }, [amount, setDurationStr])
 
     return (
         <div className="flex flex-col gap-2">
@@ -86,8 +80,8 @@ export function AddRewardsForm() {
                 <input
                     type="text"
                     className="input input-primary w-full"
-                    value={amountStr}
-                    onChange={e => setAmountStr.fromStr(e.target.value.trim())}
+                    value={amount.valueStr}
+                    onChange={e => amount.setValueStr(e.target.value.trim())}
                 />
             </div>
             <div className="form-control">
@@ -105,12 +99,40 @@ export function AddRewardsForm() {
                 </div>
             </div>
             <div>
-                {hasMounted && insufficientAllowance
-                    ? <ApproveButton />
-                    : <AddRewardsButton amount={amount} duration={duration} reset={reset} />}
+                <SubmitButton amount={amount.value} duration={duration} reset={reset} />
             </div>
         </div>
     )
+}
+
+function SubmitButton({ amount, duration, reset }: { amount: bigint, duration: number, reset: () => void }) {
+    const userInfo = useUserInfo()
+    const hasMounted = useHasMounted()
+
+    const balance = userInfo.data?.rewards.balance ?? 0n
+    const allowance = userInfo.data?.rewards.allowance ?? 0n
+    const insufficientBalance = amount > balance
+    const insufficientAllowance = amount > allowance
+
+    if (!hasMounted) {
+        return (
+            <button disabled className="btn btn-primary w-full">
+                -
+            </button>
+        )
+    }
+
+    if (insufficientBalance) {
+        return (
+            <button disabled className="btn btn-primary w-full">
+                Insufficient balance
+            </button>
+        )
+    }
+
+    return insufficientAllowance
+        ? <ApproveButton />
+        : <AddRewardsButton amount={amount} duration={duration} reset={reset} />
 }
 
 function ApproveButton() {
@@ -128,23 +150,17 @@ function ApproveButton() {
 }
 
 function AddRewardsButton({ amount, duration, reset }: { amount: bigint, duration: number, reset: () => void }) {
-    const userInfo = useUserInfo()
     const [debouncedAmount, debouncing1] = useDebounce(amount)
     const [debouncedDuration, debouncing2] = useDebounce(duration)
     const { prepare, action, wait } = useAddRewards(debouncedAmount, debouncedDuration, reset)
 
-    const balance = userInfo.data?.rewards.balance ?? 0n
-
     const zeroAmount = amount === 0n
     const zeroDuration = duration === 0;
-    const insufficientBalance = amount > balance
 
     const preparing = prepare.isLoading || prepare.isError || !action.write
     const sending = action.isLoading || wait.isLoading
     const disabled = zeroAmount
         || zeroDuration
-        || insufficientBalance
-        || !userInfo.isSuccess
         || preparing
         || sending
         || debouncing1
@@ -152,7 +168,7 @@ function AddRewardsButton({ amount, duration, reset }: { amount: bigint, duratio
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
-            <Spinner enabled={sending} /> {insufficientBalance ? 'Insufficient balance' : 'Add rewards'}
+            <Spinner enabled={sending} />&nbsp;Add rewards
         </button>
     )
 }
