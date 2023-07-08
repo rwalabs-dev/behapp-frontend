@@ -1,6 +1,6 @@
+import { BuyButton } from "@/components/BuyButton";
 import { StakeCard } from "@/components/StakeCard";
 import { ClaimCard } from "@/components/ClaimCard";
-import { MintButton } from "@/components/MintButton";
 import { PoolInfoCard } from "@/components/PoolInfoCard";
 import { UserInfoCard } from "@/components/UserInfoCard";
 import { AddRewardsCard } from "@/components/AddRewardsCard";
@@ -15,7 +15,7 @@ export default function Home() {
                     <WalletConnectButton />
                 </div>
                 <div className="w-96">
-                    <MintButton />
+                    <BuyButton />
                 </div>
             </div>
             <div className="flex flex-col mx-auto gap-4 lg:flex-row">

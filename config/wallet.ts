@@ -4,7 +4,6 @@ import { getDefaultWallets, connectorsForWallets } from '@rainbow-me/rainbowkit'
 import { configureChains, createConfig } from 'wagmi';
 import { publicProvider } from "wagmi/providers/public"
 import { arbitrum } from 'wagmi/chains'
-import { imotaWallet } from './imotaWallet';
 import { testnet } from "./testnet";
 
 // select the chain
@@ -18,21 +17,21 @@ export const { chains, publicClient } = configureChains([chain], [
     publicProvider(),
 ]);
 
-const { wallets } = getDefaultWallets({
+const { connectors } = getDefaultWallets({
     appName: 'Beh staking pool',
     projectId,
     chains,
 });
 
-const connectors = connectorsForWallets([
-    {
-        groupName: 'Partner',
-        wallets: [
-            imotaWallet({ projectId, chains }),
-        ],
-    },
-    ...wallets,
-]);
+// const connectors = connectorsForWallets([
+//     {
+//         groupName: 'Partner',
+//         wallets: [
+//             imotaWallet({ projectId, chains }),
+//         ],
+//     },
+//     ...wallets,
+// ]);
 
 export const wagmiConfig = createConfig({
     autoConnect: true,
