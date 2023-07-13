@@ -1,6 +1,7 @@
 import "./globals.css";
 
 import { Inter } from 'next/font/google';
+import { Toaster } from "@/components/Toaster";
 import { BuyButton } from "@/components/BuyButton";
 import { WalletProvider } from "@/components/WalletProvider";
 import { WalletConnectButton } from "@/components/WalletConnectButton";
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <html lang="en" data-theme="corporate">
             <body className={inter.className}>
                 <WalletProvider>
+                    <Toaster />
                     <div className="container mx-auto mt-8 mb-96">
                         <main className="flex flex-col gap-4">
                             <div className="flex flex-col mx-auto gap-4 lg:flex-row">
