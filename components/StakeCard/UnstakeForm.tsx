@@ -52,7 +52,7 @@ export function UnstakeForm() {
                 <MaxButton setAmount={amount.setValue} />
             </div>
             <div>
-                <UnstakeButton amount={amount.value} reset={amount.reset} />
+                <SubmitButton amount={amount.value} reset={amount.reset} />
             </div>
         </div>
     )
@@ -73,23 +73,46 @@ function MaxButton({ setAmount }: { setAmount: (amount: bigint) => void }) {
     )
 }
 
-function UnstakeButton({ amount, reset }: { amount: bigint, reset: () => void }) {
+function SubmitButton({ amount, reset }: { amount: bigint, reset: () => void }) {
     const userInfo = useUserInfo()
-    const [debouncedAmount, debouncing] = useDebounce(amount)
-    const { prepare, action, wait } = useUnstake(debouncedAmount, reset)
+    const hasMounted = useHasMounted()
 
     const staked = userInfo.data?.staking.staked ?? 0n
 
-    const zeroAmount = amount === 0n
     const insufficientStake = amount > staked
+
+    if (!hasMounted || !userInfo.isSuccess) {
+        return (
+            <button disabled className="btn btn-primary w-full">
+                Unstake tokens
+            </button>
+        )
+    }
+
+    if (insufficientStake) {
+        return (
+            <button disabled className="btn btn-primary w-full">
+                Insufficient stake
+            </button>
+        )
+    }
+
+    return <UnstakeButton amount={amount} reset={reset} />
+}
+
+function UnstakeButton({ amount, reset }: { amount: bigint, reset: () => void }) {
+    const [debouncedAmount, debouncing] = useDebounce(amount)
+    const { prepare, action, wait } = useUnstake(debouncedAmount, reset)
+
+    const zeroAmount = amount === 0n
 
     const preparing = prepare.isLoading || prepare.isError || !action.write
     const sending = action.isLoading || wait.isLoading
-    const disabled = zeroAmount || insufficientStake || !userInfo.isSuccess || preparing || sending || debouncing
+    const disabled = zeroAmount || preparing || sending || debouncing
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
-            <Spinner enabled={sending} /> {insufficientStake ? 'Insufficient stake' : 'Unstake tokens'}
+            <Spinner enabled={sending} /> <span>Unstake tokens</span>
         </button>
     )
 }

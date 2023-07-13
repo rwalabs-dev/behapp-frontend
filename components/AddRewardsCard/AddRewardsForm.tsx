@@ -125,10 +125,10 @@ function SubmitButton({ amount, duration, reset }: { amount: bigint, duration: n
     const insufficientBalance = amount > balance
     const insufficientAllowance = amount > allowance
 
-    if (!hasMounted) {
+    if (!hasMounted || !userInfo.isSuccess) {
         return (
             <button disabled className="btn btn-primary w-full">
-                -
+                Add rewards
             </button>
         )
     }
@@ -141,9 +141,11 @@ function SubmitButton({ amount, duration, reset }: { amount: bigint, duration: n
         )
     }
 
-    return insufficientAllowance
-        ? <ApproveButton />
-        : <AddRewardsButton amount={amount} duration={duration} reset={reset} />
+    if (insufficientAllowance) {
+        return <ApproveButton />
+    }
+
+    return <AddRewardsButton amount={amount} duration={duration} reset={reset} />
 }
 
 function ApproveButton() {
@@ -155,7 +157,7 @@ function ApproveButton() {
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
-            <Spinner enabled={sending} /> Approve contract
+            <Spinner enabled={sending} /> <span>Approve contract</span>
         </button>
     )
 }
@@ -179,7 +181,7 @@ function AddRewardsButton({ amount, duration, reset }: { amount: bigint, duratio
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
-            <Spinner enabled={sending} />&nbsp;Add rewards
+            <Spinner enabled={sending} /> <span>Add rewards</span>
         </button>
     )
 }

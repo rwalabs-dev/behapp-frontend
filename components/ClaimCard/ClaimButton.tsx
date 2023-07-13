@@ -31,18 +31,33 @@ export function ClaimButton() {
     const { prepare, action, wait } = useClaim()
     const hasMounted = useHasMounted()
 
-
     const amount = userRewards.data?.pendingRewards ?? 0n
 
     const zeroAmount = amount === 0n
 
+    if (!hasMounted || !userRewards.isSuccess) {
+        return (
+            <button disabled className="btn btn-primary w-full">
+                <Spinner enabled={true} />
+            </button>
+        )
+    }
+
+    if (zeroAmount) {
+        return (
+            <button disabled className="btn btn-primary w-full">
+                No pending rewards
+            </button>
+        )
+    }
+
     const preparing = prepare.isLoading || prepare.isError || !action.write
     const sending = action.isLoading || wait.isLoading
-    const disabled = !hasMounted || zeroAmount || !userRewards.isSuccess || preparing || sending
+    const disabled = preparing || sending
 
     return (
         <button disabled={disabled} onClick={() => action.write?.()} className="btn btn-primary w-full">
-            <Spinner enabled={sending} /> {!hasMounted || zeroAmount ? 'No pending rewards' : 'Claim rewards'}
+            <Spinner enabled={sending} /> <span>Claim rewards</span>
         </button>
     )
 }
