@@ -1,6 +1,6 @@
 "use client";
 
-import { formatUnits } from "viem";
+import { formatk } from "@/utils";
 import { usePoolInfo } from "@/hooks/usePoolInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
@@ -17,7 +17,7 @@ export function PoolTotalStaked() {
 
     return (
         <span>
-            {loaded ? `${parseFloat(formatUnits(amount, decimals)).toLocaleString()}` : '-'}
+            {loaded ? formatk(amount, decimals) : '-'}
         </span>
     )
 }

@@ -18,7 +18,8 @@ export function UserInfoCard() {
                     <span className="font-medium"><UserRewardTokenBalance /></span>
                 </p>
                 <p className="flex justify-between">
-                    Your staked amount: <span className="font-medium"><UserStakedAmount /></span>
+                    <span>Your staked <span className="font-medium"><StakingTokenSymbol /></span> amount:</span>
+                    <span className="font-medium"><UserStakedAmount /></span>
                 </p>
             </div>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { formatUnits } from "viem";
+import { formatk } from "@/utils";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
 import { useUserRewards } from "@/hooks/useUserRewards";
@@ -17,7 +17,7 @@ export function UserPendingRewards() {
 
     return (
         <span>
-            {loaded ? `${parseFloat(formatUnits(amount, decimals)).toLocaleString()}` : '-'}
+            {loaded ? formatk(amount, decimals) : '-'}
         </span>
     )
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { formatUnits } from "viem";
+import { formatk } from "@/utils";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { useTokenInfo } from "@/hooks/useTokenInfo";
 import { useHasMounted } from "@/hooks/useHasMounted";
@@ -17,7 +17,7 @@ export function UserStakingTokenBalance() {
 
     return (
         <span>
-            {loaded ? `${parseFloat(formatUnits(balance, decimals)).toLocaleString()}` : '-'}
+            {loaded ? formatk(balance, decimals) : '-'}
         </span>
     )
 }
