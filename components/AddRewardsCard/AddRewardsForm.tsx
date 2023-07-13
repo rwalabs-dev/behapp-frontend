@@ -11,8 +11,6 @@ import { useBigintInput } from "@/hooks/useBigintInput";
 import { RewardsTokenContract, StakingPoolContract } from "@/config/contracts";
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 
-const d90days = 90 * 24 * 60 * 60
-
 function useApprove() {
     const userInfo = useUserInfo()
 
@@ -59,17 +57,28 @@ function useAddRewards(amount: bigint, duration: number, reset: () => void) {
     return { prepare, action, wait }
 }
 
+function daysStrToSeconds(days: string): number {
+    if (days.trim() === "") return 0
+
+    const d = parseInt(days)
+
+    if (isNaN(d)) return 0
+    if (d < 0) return 0
+
+    return d * 24 * 60 * 60
+}
+
 export function AddRewardsForm() {
     const tokenInfo = useTokenInfo()
     const amount = useBigintInput(0n, tokenInfo.data?.rewards.decimals ?? 0)
-    const [durationStr, setDurationStr] = useState<string>('')
+    const [daysStr, setDaysStr] = useState<string>('')
 
-    const duration = durationStr.trim() === "" ? 0 : parseInt(durationStr.trim())
+    const duration = daysStrToSeconds(daysStr)
 
     const reset = useCallback(() => {
         amount.reset()
-        setDurationStr('')
-    }, [amount, setDurationStr])
+        setDaysStr('')
+    }, [amount, setDaysStr])
 
     return (
         <div className="flex flex-col gap-2">
@@ -82,21 +91,23 @@ export function AddRewardsForm() {
                     className="input input-primary w-full"
                     value={amount.valueStr}
                     onChange={e => amount.setValueStr(e.target.value.trim())}
+                    placeholder="USDC amount"
                 />
             </div>
             <div className="form-control">
-                <div className="join">
-                    <input
-                        type="number"
-                        step="1"
-                        className="input input-primary w-full"
-                        value={durationStr}
-                        onChange={e => setDurationStr(e.target.value)}
-                    />
-                    <button onClick={() => setDurationStr(d90days.toString())} className="btn btn-primary w-16">
-                        90 days
-                    </button>
-                </div>
+                <input
+                    type="number"
+                    step="1"
+                    min="0"
+                    className="input input-primary w-full"
+                    value={daysStr}
+                    onChange={e => setDaysStr(e.target.value)}
+                    placeholder="days"
+                />
+                <label className="label">
+                    <span className="label-text-alt">&nbsp;</span>
+                    <span className="label-text-alt">{duration} seconds</span>
+                </label>
             </div>
             <div>
                 <SubmitButton amount={amount.value} duration={duration} reset={reset} />
