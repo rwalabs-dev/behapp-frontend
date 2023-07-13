@@ -85,7 +85,7 @@ export function AddRewardsForm() {
                 />
             </div>
             <div className="form-control">
-                <div className="input-group">
+                <div className="join">
                     <input
                         type="number"
                         step="1"

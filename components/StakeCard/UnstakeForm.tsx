@@ -42,7 +42,7 @@ export function UnstakeForm() {
 
     return (
         <div className="flex flex-col gap-2">
-            <div className="input-group">
+            <div className="join">
                 <input
                     type="text"
                     className="input input-primary w-full"
