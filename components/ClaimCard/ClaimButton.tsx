@@ -38,7 +38,7 @@ export function ClaimButton() {
     if (!hasMounted || !userRewards.isSuccess) {
         return (
             <button disabled className="btn btn-primary w-full">
-                <Spinner enabled={true} />
+                Claim rewards
             </button>
         )
     }
