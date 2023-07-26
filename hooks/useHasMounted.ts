@@ -5,7 +5,7 @@ export function useHasMounted() {
 
     useEffect(() => {
         setHasMounted(true)
-    })
+    }, [])
 
     return hasMounted
 }
