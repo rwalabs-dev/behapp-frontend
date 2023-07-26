@@ -4,7 +4,7 @@ import { UserStakingTokenBalance } from "@/components/UserStakingTokenBalance";
 
 export function StakeCardBody() {
     return (
-        <div className="card-body pt-4">
+        <div className="card-body">
             <div className="card-title">Stake <StakingTokenSymbol /></div>
             <p className="flex justify-between">
                 Balance: <span className="font-medium"><UserStakingTokenBalance /></span>

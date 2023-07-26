@@ -42,10 +42,10 @@ export function UnstakeForm() {
 
     return (
         <div className="flex flex-col gap-2">
-            <div className="join">
+            <div className="flex gap-1">
                 <input
                     type="text"
-                    className="input input-primary w-full"
+                    className="input w-full"
                     value={amount.valueStr}
                     onChange={e => amount.setValueStr(e.target.value.trim())}
                 />

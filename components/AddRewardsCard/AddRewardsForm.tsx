@@ -81,37 +81,26 @@ export function AddRewardsForm() {
     }, [amount, setDaysStr])
 
     return (
-        <div className="flex flex-col gap-2">
-            <div>
-                <Link href="/" className="link">Back home</Link>
-            </div>
-            <div className="form-control">
-                <input
-                    type="text"
-                    className="input input-primary w-full"
-                    value={amount.valueStr}
-                    onChange={e => amount.setValueStr(e.target.value.trim())}
-                    placeholder="USDC amount"
-                />
-            </div>
-            <div className="form-control">
-                <input
-                    type="number"
-                    step="1"
-                    min="0"
-                    className="input input-primary w-full"
-                    value={daysStr}
-                    onChange={e => setDaysStr(e.target.value)}
-                    placeholder="days"
-                />
-                <label className="label">
-                    <span className="label-text-alt">&nbsp;</span>
-                    <span className="label-text-alt">{duration} seconds</span>
-                </label>
-            </div>
-            <div>
-                <SubmitButton amount={amount.value} duration={duration} reset={reset} />
-            </div>
+        <div className="flex flex-col gap-4">
+            <Link href="/" className="link">Back home</Link>
+            <input
+                type="text"
+                className="input w-full"
+                value={amount.valueStr}
+                onChange={e => amount.setValueStr(e.target.value.trim())}
+                placeholder="USDC amount"
+            />
+            <input
+                type="number"
+                step="1"
+                min="0"
+                className="input w-full"
+                value={daysStr}
+                onChange={e => setDaysStr(e.target.value)}
+                placeholder="days"
+            />
+            <div>{duration} seconds</div>
+            <SubmitButton amount={amount.value} duration={duration} reset={reset} />
         </div>
     )
 }

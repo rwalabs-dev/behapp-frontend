@@ -1,3 +1,69 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    body {
+        @apply font-light text-[#1c3664]
+    }
+
+    .card {
+        @apply border border-gray-300 rounded-[20px] shadow-xl
+    }
+
+    .card-primary {
+        @apply bg-white
+    }
+
+    .card-secondary {
+        @apply bg-[#d5f3ff]
+    }
+
+    .card-title {
+        @apply text-2xl font-bold
+    }
+
+    .card-body {
+        @apply p-5 flex flex-col gap-4 flex-1 h-full
+    }
+
+    .btn {
+        @apply text-white p-2 rounded-2xl font-bold flex gap-2 justify-center
+    }
+
+    .btn:hover {
+        @apply bg-opacity-70 cursor-pointer
+    }
+
+    .btn:disabled {
+        @apply bg-gray-300 text-gray-500 bg-opacity-100 cursor-default
+    }
+
+    .btn-primary {
+        @apply bg-[#1ea3d8]
+    }
+
+    .btn-secondary {
+        @apply bg-[#1c3664]
+    }
+
+    .input {
+        @apply px-4 py-2 rounded-2xl border border-gray-300 bg-gray-100 outline-none
+    }
+
+    .tab {
+        @apply block text-center text-white px-10 py-2 font-bold bg-[#1c3664] cursor-pointer flex-shrink
+    }
+
+    .tab.tab-active {
+        @apply bg-[#1ea3d8] cursor-default flex-grow
+    }
+
+    .tab:first-child {
+        @apply rounded-tl-2xl
+    }
+
+    .tab:last-child {
+        @apply rounded-tr-2xl
+    }
+}

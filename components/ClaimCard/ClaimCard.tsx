@@ -5,7 +5,7 @@ import { UserRemainingRewards } from "@/components/UserRemainingRewards";
 
 export function ClaimCard() {
     return (
-        <div className="card card-bordered w-96">
+        <div className="card card-secondary w-96">
             <div className="card-body">
                 <div className="card-title">Claim <RewardTokenSymbol /> Rewards</div>
                 <p className="flex justify-between">
@@ -14,7 +14,7 @@ export function ClaimCard() {
                 <p className="flex justify-between">
                     Remaining rewards: <span className="font-medium"><UserRemainingRewards /></span>
                 </p>
-                <div>
+                <div className="flex flex-col justify-end flex-grow">
                     <ClaimButton />
                 </div>
             </div>
